@@ -1,0 +1,8 @@
+"0","race.sorted <- age.sorted %>%"
+"0","  mutate(RACE = if_else(str_detect(DECEASED.DESCRIPTION, ""black""), ""black"","
+"0","                  if_else(str_detect(DECEASED.DESCRIPTION, ""negro""), ""black"","
+"0","                  if_else(str_detect(DECEASED.DESCRIPTION, ""negroe""), ""black"",                          if_else(str_detect(DECEASED.DESCRIPTION, ""colored""), ""black"","
+"0","                  if_else(str_detect(DECEASED.DESCRIPTION, ""free""), ""black"","
+"0","                  if_else(str_detect(DECEASED.DESCRIPTION, ""slave""), ""black"",                             ""white"")))))))"
+"0",""
+"0","head(race.sorted)"

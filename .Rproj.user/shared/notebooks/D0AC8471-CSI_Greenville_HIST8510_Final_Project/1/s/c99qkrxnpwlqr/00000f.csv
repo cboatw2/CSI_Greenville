@@ -1,0 +1,3 @@
+"0","CSI.GVL <- read.csv(""https://docs.google.com/spreadsheets/d/e/2PACX-1vQzO3uN1w0-A_rN3bHuBWDr1iQe9hPZ68u7igu-I8wWDEpHSWH5T3AQFPvaa-VMSbuB8Z8X5wxSjmA6/pub?output=csv"") "
+"0",""
+"0","print(CSI.GVL)"

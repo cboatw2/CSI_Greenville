@@ -1,0 +1,185 @@
+---
+title: "CSI:Dixie Greenville"
+author: "Candy Boatwright"
+format: html
+---
+
+Load libraries
+
+```{r}
+library(tidytext)
+library(tidyverse)
+library(readtext)
+library(tm)
+library(topicmodels)
+```
+
+
+Loading file
+
+```{r}
+CSI.GVL <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vQzO3uN1w0-A_rN3bHuBWDr1iQe9hPZ68u7igu-I8wWDEpHSWH5T3AQFPvaa-VMSbuB8Z8X5wxSjmA6/pub?output=csv") 
+
+print(CSI.GVL)
+
+```
+
+Tidying data
+
+```{r}
+
+CSI.GVL.TIDY <- CSI.GVL %>%
+  separate(NAME, c("FIRST.NAME", "LAST.NAME"), sep = " ", remove = FALSE) %>% #separates first and last names
+  separate(DATE, c("MONTH", "DAY", "YEAR"), sep = " ", remove = FALSE) #separates dates into month, day, year
+
+head(CSI.GVL.TIDY)
+```
+
+```{r}
+#plot deaths by year
+ggplot(CSI.GVL.TIDY, aes(x = YEAR)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + geom_dotplot(binwidth = 1) 
+
+```
+
+
+```{r}
+
+death.type <- CSI.GVL.TIDY %>%
+  group_by(DEATH.TYPE) %>%
+  summarize(count = n())
+  
+ggplot(death.type, aes(x = DEATH.TYPE, y = count)) +  geom_col() 
+```
+
+```{r}
+#write code to display type of death by decade
+by.year <- CSI.GVL.TIDY %>%
+  group_by(YEAR, DEATH.TYPE) %>%
+  summarize(count = n())
+
+ggplot(by.year, aes(x = DEATH.TYPE, y = count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + geom_col() + facet_wrap(~YEAR)
+```
+
+```{r}
+#group by decade - create a new dataframe by decade and average death types over years within that decade"
+
+by.decade <- CSI.GVL.TIDY %>%
+  mutate(DECADE = if_else(YEAR >= 1800 & YEAR < 1810, "Aughts",
+                          if_else(YEAR >= 1810 & YEAR < 1820, "Tens",
+                          if_else(YEAR >= 1820 & YEAR < 1830, "Twenties",
+                          if_else(YEAR >= 1830 & YEAR < 1840, "Thirties",
+                          if_else(YEAR >= 1840 & YEAR < 1850, "Forties",
+                          if_else(YEAR >= 1850 & YEAR < 1860, "Fifties",
+                          if_else(YEAR >= 1860 & YEAR < 1870, "Sixties",
+                          if_else(YEAR >= 1870 & YEAR < 1880, "Seventies",
+                          if_else(YEAR >= 1880 & YEAR < 1890, "Eighties",
+                          if_else(YEAR >= 1890 & YEAR < 1900, "Nineties",                                   "Other"))))))))))) %>% as_tibble()
+
+print(by.decade)
+```
+
+```{r}
+#chart DEATH.TYPE by DECADE
+
+decade.count <- by.decade %>%
+  group_by(DECADE, DEATH.TYPE) %>%
+  summarize(count = n())
+
+ggplot(decade.count, aes(DEATH.TYPE, count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + geom_col() + facet_wrap(~DECADE)
+```
+
+```{r}
+by.year <- CSI.GVL.TIDY %>%
+  group_by(YEAR, DEATH.TYPE) %>%
+  summarize(count = n()) %>%
+
+ggplot(aes(x = DEATH.TYPE, y = count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + geom_col() + facet_wrap(~YEAR)
+```
+
+```{r}
+total.by.decade <- by.decade %>%
+  group_by(NAME, DECADE) %>%
+  summarize(count = n())
+  
+ggplot(total.by.decade, aes(x = DECADE, y = count)) +  geom_col() 
+```
+
+In Greenville County, coroner inquests increase dramatically in from 1850 through the end of the 1880s, with the 1870s and 80s having the highest occurrences by a significant margin.
+
+Some of the type of death increases would correspond with the Civil War. For example, the homicide and suicide rates during the 1850s and 60s are the highest compared to all other decades. What is interesting, however, is that the types of death that would seem as if there would not be a tremendous fluctuation due to war (ie: accidents and natural causes) also see a large spike during these decades. 
+
+Stephen Berry in his book, Count the Dead, addresses the rise of the modern state and its correlation with the quantification of death. During the legislative session of 1849 a tremendous reform was passed through the United States Congress, almost by accident. As the last bill before the session adjorned for the year it received almost no review and was passed as speedily as possible. When Congress reconviened in 1850 there was an immediate reaction to the actual contents of the bill followed by resistance. South Carolina Senator .. 
+
+In examining the coroners inquest from Greenville County it is clear that this practice of refusing to name or further identify black individuals trickled down from the highest governmental offices to the local levels. It is also clear that infants and children of undetermined race often were not named in the inquests.
+
+```{r}
+age.sorted <- CSI.GVL.TIDY %>%
+  mutate(AGE = if_else(str_detect(DECEASED.DESCRIPTION, "child"), "child",
+                       if_else(str_detect(DECEASED.DESCRIPTION, "infant"), "child",
+                        if_else(str_detect(DECEASED.DESCRIPTION, "boy"), "child", if_else(str_detect(DECEASED.DESCRIPTION, "son"), "child", "adult")))))
+
+head(age.sorted)
+```
+
+```{r}
+race.sorted <- age.sorted %>%
+  mutate(RACE = if_else(str_detect(DECEASED.DESCRIPTION, "black"), "black",
+                  if_else(str_detect(DECEASED.DESCRIPTION, "negro"), "black",
+                  if_else(str_detect(DECEASED.DESCRIPTION, "negroe"), "black",                          if_else(str_detect(DECEASED.DESCRIPTION, "colored"), "black",
+                  if_else(str_detect(DECEASED.DESCRIPTION, "free"), "black",
+                  if_else(str_detect(DECEASED.DESCRIPTION, "slave"), "black",                             "white")))))))
+
+head(race.sorted)
+```
+
+```{r}
+var <- mpg$class  # the categorical data 
+
+## Prep data (nothing to change here)
+nrows <- 10
+df <- expand.grid(y = 1:nrows, x = 1:nrows)
+categ_table <- round(table(var) * ((nrows*nrows)/(length(var))))
+categ_table
+#>   2seater    compact    midsize    minivan     pickup subcompact        suv 
+#>         2         20         18          5         14         15         26 
+
+df$category <- factor(rep(names(categ_table), categ_table))  
+# NOTE: if sum(categ_table) is not 100 (i.e. nrows^2), it will need adjustment to make the sum to 100.
+
+## Plot
+ggplot(df, aes(x = x, y = y, fill = category)) + 
+        geom_tile(color = "black", size = 0.5) +
+        scale_x_continuous(expand = c(0, 0)) +
+        scale_y_continuous(expand = c(0, 0), trans = 'reverse') +
+        scale_fill_brewer(palette = "Set3") +
+        labs(title="Waffle Chart", subtitle="'Class' of vehicles",
+             caption="Source: mpg") + 
+        theme(panel.border = element_rect(size = 2),
+              plot.title = element_text(size = rel(1.2)),
+              axis.text = element_blank(),
+              axis.title = element_blank(),
+              axis.ticks = element_blank(),
+              legend.title = element_blank(),
+              legend.position = "right")
+```
+
+
+```{r}
+
+# library
+library(treemap)
+ 
+# Build Dataset
+group <- c(rep("group-1",4),rep("group-2",2),rep("group-3",3))
+subgroup <- paste("subgroup" , c(1,2,3,4,1,2,1,2,3), sep="-")
+value <- c(13,5,22,12,11,7,3,1,23)
+data <- data.frame(group,subgroup,value)
+ 
+# treemap
+treemap(data,
+            index=c("group","subgroup"),
+            vSize="value",
+            type="index"
+            ) 
+```
+

@@ -1,0 +1,7 @@
+"0",""
+"0","CSI.GVL.TIDY <- CSI.GVL %>%"
+"0","  separate(NAME, c(""FIRST.NAME"", ""LAST.NAME""), sep = "" "", remove = FALSE) %>% #separates first and last names"
+"0","  separate(DATE, c(""MONTH"", ""DAY"", ""YEAR""), sep = "" "", remove = FALSE) #separates dates into month, day, year"
+"2","Warning: Expected 2 pieces. Additional pieces discarded in 9 rows [6, 9, 21, 22, 28, 58, 59, 89, 113]."
+"2","Warning: Expected 2 pieces. Missing pieces filled with `NA` in 13 rows [8, 10, 16, 23, 30, 31, 33, 34, 39, 41, 42, 43, 66]."
+"0","head(CSI.GVL.TIDY)"
