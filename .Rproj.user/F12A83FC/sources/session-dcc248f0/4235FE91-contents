@@ -122,15 +122,48 @@ head(age.sorted)
 ```
 
 ```{r}
-race.sorted <- age.sorted %>%
+#adds sorting by race to dataframe previously sorted by age
+all.sorted <- age.sorted %>%
   mutate(RACE = if_else(str_detect(DECEASED.DESCRIPTION, "black"), "black",
                   if_else(str_detect(DECEASED.DESCRIPTION, "negro"), "black",
                   if_else(str_detect(DECEASED.DESCRIPTION, "negroe"), "black",                          if_else(str_detect(DECEASED.DESCRIPTION, "colored"), "black",
                   if_else(str_detect(DECEASED.DESCRIPTION, "free"), "black",
                   if_else(str_detect(DECEASED.DESCRIPTION, "slave"), "black",                             "white")))))))
 
-head(race.sorted)
+head(all.sorted)
 ```
+
+```{r}
+
+# library
+
+ 
+# Build Dataset
+#group <- c(rep("group-1",4),rep("group-2",2),rep("group-3",3))
+#subgroup <- paste("subgroup" , c(1,2,3,4,1,2,1,2,3), sep="-")
+#value <- c(13,5,22,12,11,7,3,1,23)
+#data <- data.frame(group,subgroup,value)
+ 
+# treemap
+
+library(waffle)
+
+count.sorted <- all.sorted %>%
+   group_by(AGE, RACE) %>%
+  summarize(count = n()) %>%
+  unite(count.sorted, SORTED_COUNT, sep=" ")
+  
+
+waffle(count.sorted, row = 10, legend_pos = "bottom")
+
+#treemap(all.sorted,
+ #           index=c("AGE","RACE"),
+  #          vSize= count,
+   #         type="index"
+    #        ) 
+```
+
+
 
 ```{r}
 var <- mpg$class  # the categorical data 
@@ -164,22 +197,5 @@ ggplot(df, aes(x = x, y = y, fill = category)) +
 ```
 
 
-```{r}
 
-# library
-library(treemap)
- 
-# Build Dataset
-group <- c(rep("group-1",4),rep("group-2",2),rep("group-3",3))
-subgroup <- paste("subgroup" , c(1,2,3,4,1,2,1,2,3), sep="-")
-value <- c(13,5,22,12,11,7,3,1,23)
-data <- data.frame(group,subgroup,value)
- 
-# treemap
-treemap(data,
-            index=c("group","subgroup"),
-            vSize="value",
-            type="index"
-            ) 
-```
 

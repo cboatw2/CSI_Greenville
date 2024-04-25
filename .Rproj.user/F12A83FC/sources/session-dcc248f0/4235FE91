@@ -3,7 +3,7 @@
     "path": "~/HIST8510_Final_Project/CSI_Greenville_HIST8510_Final_Project.qmd",
     "project_path": null,
     "type": "quarto_markdown",
-    "hash": "0",
+    "hash": "814520185",
     "contents": "",
     "dirty": false,
     "created": 1713949508467.0,
@@ -12,15 +12,15 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "124,25",
-        "scrollLine": "122"
+        "cursorPosition": "153,34",
+        "scrollLine": "147"
     },
     "folds": "",
-    "lastKnownWriteTime": 1714036692,
+    "lastKnownWriteTime": 1714039327,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1714036692434,
+    "last_content_update": 1714039327289,
     "read_only": false,
     "read_only_alternatives": []
 }
