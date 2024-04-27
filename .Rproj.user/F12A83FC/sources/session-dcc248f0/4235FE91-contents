@@ -42,7 +42,7 @@ ggplot(CSI.GVL.TIDY, aes(x = YEAR)) + theme(axis.text.x=element_text(angle=90,hj
 
 
 ```{r}
-
+#chart by DEATH.TYPE
 death.type <- CSI.GVL.TIDY %>%
   group_by(DEATH.TYPE) %>%
   summarize(count = n())
@@ -96,6 +96,7 @@ ggplot(aes(x = DEATH.TYPE, y = count)) + theme(axis.text.x=element_text(angle=90
 ```
 
 ```{r}
+#chart total number of deaths by decade
 total.by.decade <- by.decade %>%
   group_by(NAME, DECADE) %>%
   summarize(count = n())
@@ -200,10 +201,136 @@ ggplot(df, aes(x = x, y = y, fill = category)) +
 
 #Explore if Greenville is different than other areas of the state. Show a difference in development of local government (ie: coroners' office)? Show a difference in demographics? Show a difference in amount/types of local industry?
 
+Anderson County Dataset and Charts
+
 ```{r}
 #load Anderson County data
 CSI.ANDERSON <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSZ5lXF7WTLe71GUg6Z_h6HgtoeQJ6BX1JQ7H6IgkGvrXSqzxIh720ElLPeWmzoXytW2O9J7bgL82Kg/pub?output=csv") 
 
 print(CSI.ANDERSON)
 ```
+
+```{r}
+CSI.ANDERSON.TIDY <- CSI.ANDERSON %>%
+  separate(NAME, c("FIRST.NAME", "LAST.NAME"), sep = " ", remove = FALSE) %>% #separates first and last names
+  separate(DATE, c("MONTH", "DAY", "YEAR"), sep = " ", remove = FALSE) #separates dates into month, day, year
+
+head(CSI.ANDERSON.TIDY)
+```
+
+```{r}
+#group by decade - create a new dataframe by decade and average death types over years within that decade"
+
+by.decade.anderson <- CSI.ANDERSON.TIDY %>%
+  mutate(DECADE = if_else(YEAR >= 1800 & YEAR < 1810, "Aughts",
+                          if_else(YEAR >= 1810 & YEAR < 1820, "Tens",
+                          if_else(YEAR >= 1820 & YEAR < 1830, "Twenties",
+                          if_else(YEAR >= 1830 & YEAR < 1840, "Thirties",
+                          if_else(YEAR >= 1840 & YEAR < 1850, "Forties",
+                          if_else(YEAR >= 1850 & YEAR < 1860, "Fifties",
+                          if_else(YEAR >= 1860 & YEAR < 1870, "Sixties",
+                          if_else(YEAR >= 1870 & YEAR < 1880, "Seventies",
+                          if_else(YEAR >= 1880 & YEAR < 1890, "Eighties",
+                          if_else(YEAR >= 1890 & YEAR < 1900, "Nineties",                                   "Other"))))))))))) %>% as_tibble()
+
+print(by.decade.anderson)
+```
+
+```{r}
+#chart Anderson by DEATH.TYPE
+death.type <- CSI.ANDERSON.TIDY %>%
+  group_by(DEATH.TYPE) %>%
+  summarize(count = n())
+  
+ggplot(death.type, aes(x = DEATH.TYPE, y = count)) +  geom_col() 
+```
+
+
+```{r}
+#chart DEATH.TYPE by DECADE
+
+decade.count.anderson <- by.decade.anderson %>%
+  group_by(DECADE, DEATH.TYPE) %>%
+  summarize(count = n())
+
+ggplot(decade.count, aes(DEATH.TYPE, count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + geom_col() + facet_wrap(~DECADE)
+```
+
+```{r}
+#chart total number of Anderson deaths by decade
+total.anderson.by.decade <- by.decade.anderson %>%
+  group_by(NAME, DECADE) %>%
+  summarize(count = n())
+  
+ggplot(total.by.decade, aes(x = DECADE, y = count)) +  geom_col() 
+```
+
+Chesterfield County Dataset and Charts
+
+```{r}
+#load Anderson County data
+CSI.ANDERSON <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSZ5lXF7WTLe71GUg6Z_h6HgtoeQJ6BX1JQ7H6IgkGvrXSqzxIh720ElLPeWmzoXytW2O9J7bgL82Kg/pub?output=csv") 
+
+print(CSI.ANDERSON)
+```
+
+```{r}
+CSI.ANDERSON.TIDY <- CSI.ANDERSON %>%
+  separate(NAME, c("FIRST.NAME", "LAST.NAME"), sep = " ", remove = FALSE) %>% #separates first and last names
+  separate(DATE, c("MONTH", "DAY", "YEAR"), sep = " ", remove = FALSE) #separates dates into month, day, year
+
+head(CSI.ANDERSON.TIDY)
+```
+
+```{r}
+#group by decade - create a new dataframe by decade and average death types over years within that decade"
+
+by.decade.anderson <- CSI.ANDERSON.TIDY %>%
+  mutate(DECADE = if_else(YEAR >= 1800 & YEAR < 1810, "Aughts",
+                          if_else(YEAR >= 1810 & YEAR < 1820, "Tens",
+                          if_else(YEAR >= 1820 & YEAR < 1830, "Twenties",
+                          if_else(YEAR >= 1830 & YEAR < 1840, "Thirties",
+                          if_else(YEAR >= 1840 & YEAR < 1850, "Forties",
+                          if_else(YEAR >= 1850 & YEAR < 1860, "Fifties",
+                          if_else(YEAR >= 1860 & YEAR < 1870, "Sixties",
+                          if_else(YEAR >= 1870 & YEAR < 1880, "Seventies",
+                          if_else(YEAR >= 1880 & YEAR < 1890, "Eighties",
+                          if_else(YEAR >= 1890 & YEAR < 1900, "Nineties",                                   "Other"))))))))))) %>% as_tibble()
+
+print(by.decade.anderson)
+```
+
+```{r}
+#chart Anderson by DEATH.TYPE
+death.type <- CSI.ANDERSON.TIDY %>%
+  group_by(DEATH.TYPE) %>%
+  summarize(count = n())
+  
+ggplot(death.type, aes(x = DEATH.TYPE, y = count)) +  geom_col() 
+```
+
+
+```{r}
+#chart DEATH.TYPE by DECADE
+
+decade.count.anderson <- by.decade.anderson %>%
+  group_by(DECADE, DEATH.TYPE) %>%
+  summarize(count = n())
+
+ggplot(decade.count, aes(DEATH.TYPE, count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + geom_col() + facet_wrap(~DECADE)
+```
+
+```{r}
+#chart total number of Anderson deaths by decade
+total.anderson.by.decade <- by.decade.anderson %>%
+  group_by(NAME, DECADE) %>%
+  summarize(count = n())
+  
+ggplot(total.by.decade, aes(x = DECADE, y = count)) +  geom_col() 
+```
+
+
+
+
+
 
