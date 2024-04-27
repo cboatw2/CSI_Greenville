@@ -11,6 +11,9 @@ library(tidytext)
 library(tidyverse)
 library(readtext)
 library(tm)
+library(ggplot2) 
+library(ggmap)
+library(tidygeocoder)
 ```
 
 
@@ -301,7 +304,7 @@ print(by.decade.chesterfield)
 ```
 
 ```{r}
-#chart Anderson by DEATH.TYPE
+#chart Chesterfield by DEATH.TYPE
 death.type.chesterfield <- CSI.CHESTERFIELD.TIDY %>%
   group_by(DEATH.TYPE) %>%
   summarize(count = n())
@@ -321,7 +324,7 @@ ggplot(decade.count.chesterfield, aes(DEATH.TYPE, count)) + theme(axis.text.x=el
 ```
 
 ```{r}
-#chart total number of Anderson deaths by decade
+#chart total number of Chesterfield deaths by decade
 total.chesterfield.by.decade <- by.decade.chesterfield %>%
   group_by(NAME, DECADE) %>%
   summarize(count = n())
@@ -329,8 +332,81 @@ total.chesterfield.by.decade <- by.decade.chesterfield %>%
 ggplot(total.chesterfield.by.decade, aes(x = DECADE, y = count)) +  geom_col() 
 ```
 
+Horry County Dataset and Charts
+
+```{r}
+#load Horry County data
+CSI.HORRY <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vQLbn85PImxeinLSgyS-CXgm3uPgp663HrzzVLeqYPa40QIaWWADQcbnhZBKR7MSHHzNFPk9PWdrBrh/pub?output=csv")
+
+print(CSI.HORRY)
+```
+
+```{r}
+CSI.HORRY.TIDY <- CSI.HORRY %>%
+  separate(NAME, c("FIRST.NAME", "LAST.NAME"), sep = " ", remove = FALSE) %>% #separates first and last names
+  separate(DATE, c("MONTH", "DAY", "YEAR"), sep = " ", remove = FALSE) #separates dates into month, day, year
+
+head(CSI.HORRY.TIDY)
+```
+
+```{r}
+#group by decade - create a new dataframe by decade and average death types over years within that decade"
+
+by.decade.horry <- CSI.HORRY.TIDY %>%
+  mutate(DECADE = if_else(YEAR >= 1800 & YEAR < 1810, "Aughts",
+                          if_else(YEAR >= 1810 & YEAR < 1820, "Tens",
+                          if_else(YEAR >= 1820 & YEAR < 1830, "Twenties",
+                          if_else(YEAR >= 1830 & YEAR < 1840, "Thirties",
+                          if_else(YEAR >= 1840 & YEAR < 1850, "Forties",
+                          if_else(YEAR >= 1850 & YEAR < 1860, "Fifties",
+                          if_else(YEAR >= 1860 & YEAR < 1870, "Sixties",
+                          if_else(YEAR >= 1870 & YEAR < 1880, "Seventies",
+                          if_else(YEAR >= 1880 & YEAR < 1890, "Eighties",
+                          if_else(YEAR >= 1890 & YEAR < 1900, "Nineties",                                   "Other"))))))))))) %>% as_tibble()
+
+print(by.decade.horry)
+```
+
+```{r}
+#chart Horry by DEATH.TYPE
+death.type.horry <- CSI.HORRY.TIDY %>%
+  group_by(DEATH.TYPE) %>%
+  summarize(count = n())
+  
+ggplot(death.type.horry, aes(x = DEATH.TYPE, y = count)) +  geom_col() 
+```
 
 
+```{r}
+#chart DEATH.TYPE by DECADE
 
+decade.count.horry <- by.decade.horry %>%
+  group_by(DECADE, DEATH.TYPE) %>%
+  summarize(count = n())
+
+ggplot(decade.count.horry, aes(DEATH.TYPE, count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + geom_col() + facet_wrap(~DECADE)
+```
+
+```{r}
+#chart total number of Horry deaths by decade
+total.horry.by.decade <- by.decade.horry %>%
+  group_by(NAME, DECADE) %>%
+  summarize(count = n())
+  
+ggplot(total.horry.by.decade, aes(x = DECADE, y = count)) +  geom_col() 
+```
+
+```{r}
+#create dataset for all CSI:Dixie South Carolina counties and # of inquests
+CSI_DIXIE <- data_frame(COUNTY=c("Anderson", "Chesterfield", "Edgefield", "Fairfield", "Greenville", "Horry", "Kershaw", "Laurens", "Spartanburg", "Union"), STATE=("SC"), NUMBER_OF_INQUESTS=c(152, 528, 515, 292, 141, 42, 262, 352, 326, 216))
+
+#geocode counties
+CSI.DIXIE.COORDINATES <- CSI_DIXIE %>% geocode(county = COUNTY, state = STATE, method='osm', lat = latitude, long = longitude)
+head(CSI.DIXIE.COORDINATES)
+```
+
+```{r}
+
+```
 
 
