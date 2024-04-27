@@ -200,3 +200,10 @@ ggplot(df, aes(x = x, y = y, fill = category)) +
 
 #Explore if Greenville is different than other areas of the state. Show a difference in development of local government (ie: coroners' office)? Show a difference in demographics? Show a difference in amount/types of local industry?
 
+```{r}
+#load Anderson County data
+CSI.ANDERSON <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSZ5lXF7WTLe71GUg6Z_h6HgtoeQJ6BX1JQ7H6IgkGvrXSqzxIh720ElLPeWmzoXytW2O9J7bgL82Kg/pub?output=csv") 
+
+print(CSI.ANDERSON)
+```
+
