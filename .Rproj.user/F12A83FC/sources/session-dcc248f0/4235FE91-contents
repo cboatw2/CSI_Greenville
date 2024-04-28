@@ -398,7 +398,7 @@ ggplot(total.horry.by.decade, aes(x = DECADE, y = count)) +  geom_col()
 
 ```{r}
 #create dataset for all CSI:Dixie South Carolina counties and # of inquests
-CSI_DIXIE <- data_frame(COUNTY=c("Anderson", "Chesterfield", "Edgefield", "Fairfield", "Greenville", "Horry", "Kershaw", "Laurens", "Spartanburg", "Union"), STATE=("SC"), NUMBER_OF_INQUESTS=c(152, 528, 515, 292, 141, 42, 262, 352, 326, 216))
+CSI_DIXIE <- data_frame(COUNTY=c("Anderson", "Chesterfield", "Edgefield", "Fairfield", "Greenville", "Horry", "Kershaw", "Laurens", "Spartanburg", "Union"), STATE=("South Carolina"), NUMBER_OF_INQUESTS=c(152, 528, 515, 292, 141, 42, 262, 352, 326, 216))
 
 #geocode counties
 CSI.DIXIE.COORDINATES <- CSI_DIXIE %>% geocode(county = COUNTY, state = STATE, method='osm', lat = latitude, long = longitude)
@@ -406,7 +406,50 @@ head(CSI.DIXIE.COORDINATES)
 ```
 
 ```{r}
+state <- map_data("state")
+sc <- subset(state, region=="south carolina")
+counties <- map_data("county")
+sc_county <- subset(counties, region=="south carolina")
 
+sc_map <- ggplot(data=sc, mapping=aes(x=long, y=lat, group=group)) + 
+  coord_fixed(1.3) + 
+  geom_polygon(color="black", fill="gray") + 
+  geom_polygon(data=sc_county, fill=NA, color="white") + 
+  geom_polygon(color="black", fill=NA) + 
+  ggtitle('South Carolina Map with Counties') + 
+  theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(),
+        axis.title.y=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank())
+sc_map
+
+#CSI.DIXIE.COORDINATES %>% ggplot() + 
+ # geom_map(data = usa, map = usa, aes(longitude, latitude, map_id=region)) +
+  #geom_point(data = CSI.DIXIE.COORDINATES, mapping = aes(x=longitude, y=latitude))
 ```
 
+```{r}
+sc.map.data <- left_join(state, CSI.DIXIE.COORDINATES, join_by(region == STATE))
+```
+
+
+```{r}
+ 
+csi.map <- sc_map + geom_point(data = sc.map.data, mapping = aes(x=longitude, y=latitude))
+
+csi.map
+```
+
+```{r}
+state <- map_data("state")
+sc <- subset(state, region=="south carolina")
+counties <- map_data("county")
+sc_county <- subset(counties, region=="south carolina")
+
+sc_map <- ggplot(data=sc, mapping=aes(x=long, y=lat, group=group))
+
+sc_map
+
+ggplot() + 
+  geom_map( data = usa, map = usa, aes(long, lat, map_id=region)) +
+  geom_point(data = gayguides, mapping = aes(x=lon, y=lat))
+```
 
