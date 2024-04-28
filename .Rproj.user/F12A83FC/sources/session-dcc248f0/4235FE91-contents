@@ -4,9 +4,10 @@ author: "Candy Boatwright"
 format: html
 ---
 
-Load libraries
+
 
 ```{r}
+#load libraries
 library(tidytext)
 library(tidyverse)
 library(readtext)
@@ -17,19 +18,16 @@ library(tidygeocoder)
 ```
 
 
-Loading file
-
 ```{r}
+#load CSI:Dixie Greenville County data
 CSI.GVL <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vQzO3uN1w0-A_rN3bHuBWDr1iQe9hPZ68u7igu-I8wWDEpHSWH5T3AQFPvaa-VMSbuB8Z8X5wxSjmA6/pub?output=csv") 
 
 print(CSI.GVL)
 
 ```
 
-Tidying data
-
 ```{r}
-
+#tidy data
 CSI.GVL.TIDY <- CSI.GVL %>%
   separate(NAME, c("FIRST.NAME", "LAST.NAME"), sep = " ", remove = FALSE) %>% #separates first and last names
   separate(DATE, c("MONTH", "DAY", "YEAR"), sep = " ", remove = FALSE) #separates dates into month, day, year
@@ -39,18 +37,26 @@ head(CSI.GVL.TIDY)
 
 ```{r}
 #plot deaths by year
-ggplot(CSI.GVL.TIDY, aes(x = YEAR)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + geom_dotplot(binwidth = 1) 
+ggplot(CSI.GVL.TIDY, aes(x = YEAR)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + geom_dotplot(binwidth = 1)
 
 ```
 
-
 ```{r}
-#chart by DEATH.TYPE
 death.type <- CSI.GVL.TIDY %>%
   group_by(DEATH.TYPE) %>%
   summarize(count = n())
   
 ggplot(death.type, aes(x = DEATH.TYPE, y = count)) +  geom_col() 
+```
+
+
+```{r}
+#chart by DEATH.TYPE
+year.count <- CSI.GVL.TIDY %>%
+  group_by(YEAR) %>%
+  summarize(count = n())
+  
+ggplot(year.count, aes(x = YEAR, y = count)) +  geom_point(aes(size = count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) 
 ```
 
 ```{r}
@@ -268,6 +274,15 @@ total.anderson.by.decade <- by.decade.anderson %>%
 ggplot(total.anderson.by.decade, aes(x = DECADE, y = count)) +  geom_col() 
 ```
 
+```{r}
+#chart Anderson by year count
+year.count.anderson <- CSI.ANDERSON.TIDY %>%
+  group_by(YEAR) %>%
+  summarize(count = n())
+  
+ggplot(year.count.anderson, aes(x = YEAR, y = count)) +  geom_point(aes(size = count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) 
+```
+
 Chesterfield County Dataset and Charts
 
 ```{r}
@@ -331,6 +346,16 @@ total.chesterfield.by.decade <- by.decade.chesterfield %>%
   
 ggplot(total.chesterfield.by.decade, aes(x = DECADE, y = count)) +  geom_col() 
 ```
+
+```{r}
+#chart Chesterfield by year count
+year.count.chesterfield <- CSI.CHESTERFIELD.TIDY %>%
+  group_by(YEAR) %>%
+  summarize(count = n())
+  
+ggplot(year.count.chesterfield, aes(x = YEAR, y = count)) +  geom_point(aes(size = count)) + theme(axis.text.x=element_text(angle=90,hjust=1, size=5)) 
+```
+
 
 Horry County Dataset and Charts
 
@@ -397,6 +422,16 @@ ggplot(total.horry.by.decade, aes(x = DECADE, y = count)) +  geom_col()
 ```
 
 ```{r}
+#chart Horry by year count
+year.count.horry <- CSI.HORRY.TIDY %>%
+  group_by(YEAR) %>%
+  summarize(count = n())
+  
+ggplot(year.count.horry, aes(x = YEAR, y = count)) +  geom_point(aes(size = count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) 
+```
+
+
+```{r}
 #create dataset for all CSI:Dixie South Carolina counties and # of inquests
 CSI_DIXIE <- data_frame(COUNTY=c("Anderson", "Chesterfield", "Edgefield", "Fairfield", "Greenville", "Horry", "Kershaw", "Laurens", "Spartanburg", "Union"), STATE=("South Carolina"), NUMBER_OF_INQUESTS=c(152, 528, 515, 292, 141, 42, 262, 352, 326, 216))
 
@@ -452,4 +487,7 @@ ggplot() +
   geom_map( data = usa, map = usa, aes(long, lat, map_id=region)) +
   geom_point(data = gayguides, mapping = aes(x=lon, y=lat))
 ```
+
+
+
 
