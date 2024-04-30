@@ -1,6 +1,0 @@
-"0","age.sorted <- CSI.GVL.TIDY %>%"
-"0","  mutate(AGE = if_else(str_detect(DECEASED.DESCRIPTION, ""child""), ""child"","
-"0","                       if_else(str_detect(DECEASED.DESCRIPTION, ""infant""), ""child"","
-"0","                        if_else(str_detect(DECEASED.DESCRIPTION, ""boy""), ""child"", if_else(str_detect(DECEASED.DESCRIPTION, ""son""), ""child"", ""adult"")))))"
-"0",""
-"0","head(age.sorted)"

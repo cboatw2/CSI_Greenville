@@ -1,6 +1,0 @@
-"0","by.year <- CSI.GVL.TIDY %>%"
-"0","  group_by(YEAR, DEATH.TYPE) %>%"
-"0","  summarize(count = n()) %>%"
-"0",""
-"0","ggplot(aes(x = DEATH.TYPE, y = count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + geom_col() + facet_wrap(~YEAR)"
-"2","`summarise()` has grouped output by 'YEAR'. You can override using the `.groups` argument."
