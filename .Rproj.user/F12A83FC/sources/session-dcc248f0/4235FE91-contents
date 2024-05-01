@@ -12,18 +12,21 @@ library(tidytext)
 library(tidyverse)
 library(readtext)
 library(tm)
-library(ggplot2) 
-library(ggmap)
-library(tidygeocoder)
 ```
 
+
+
+Stephen Berry in his book, Count the Dead, addresses the rise of the modern state and its correlation with the quantification of death. During the legislative session of 1849 a tremendous reform was passed through the United States Congress, almost by accident. As the last bill before the session adjourned for the year it received almost no review and was passed as speedily as possible. 
+
+The reform was the newly appointed U.S. Census Chair's, Joseph C. G. Kennedy, implementation of a census questionairre to be admistered by federal agents traveling throughout the country. The questionairre contained six schedules, the second was to record information on the enslaved persons living on the premesis including their names and place of birth. When Congress reconvened in 1850 there was an immediate reaction to the bill followed by resistance. South Carolina Senator Andrew Butler moved that no names of enslaved persons should be recorded and Senator William King of Alabama quickly followed by demanding no city of birth be recorded for the enslaved. Both motions were speedily carried. (Berry, Count The Dead, 18-21)
+
+While Congress, especially those from southern states, beat the life out of Schedule 2, what they failed to act on was Schedule 3 which contained the questions to be asked about who had died on the propery over the preceeding year and what had caused their death. So, the first mortality census was born.
+
+The CSI:Dixie project produced by eHistory at the University of Georgia and is based on coroners reports in the South. They had created county datasets from ten South Carolina counties to date primarily from the 19th century. In this project, I beginning by examining the Greenville County dataset to understand the implications of the information from the coroners' inquests and then expand my focus to include Anderson, Chesterfield and Horry counties in order to examine regional similarities and differences.
 
 ```{r}
 #load CSI:Dixie Greenville County data
 CSI.GVL <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vQzO3uN1w0-A_rN3bHuBWDr1iQe9hPZ68u7igu-I8wWDEpHSWH5T3AQFPvaa-VMSbuB8Z8X5wxSjmA6/pub?output=csv") 
-
-print(CSI.GVL)
-
 ```
 
 ```{r}
@@ -31,15 +34,29 @@ print(CSI.GVL)
 CSI.GVL.TIDY <- CSI.GVL %>%
   separate(NAME, c("FIRST.NAME", "LAST.NAME"), sep = " ", remove = FALSE) %>% #separates first and last names
   separate(DATE, c("MONTH", "DAY", "YEAR"), sep = " ", remove = FALSE) #separates dates into month, day, year
-
-head(CSI.GVL.TIDY)
 ```
+
+CSI:Greenville:
+
+In Greenville County, coroner inquests increase dramatically in from 1850 through the end of the 1880s, with the 1870s and 80s having the highest occurrences by a significant margin.
 
 ```{r}
-#plot deaths by year
-ggplot(CSI.GVL.TIDY, aes(x = YEAR)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + geom_dotplot(binwidth = 1)
+#plot Greenville deaths by year
+ggplot(CSI.GVL.TIDY, aes(x = YEAR)) + theme(axis.text.x=element_text(angle=90, hjust=1)) + geom_dotplot(binwidth = 1) + labs(title = "Greenville Inquests by Year")
 
 ```
+
+The most obvious explaination is that some types of death increases would necessarily correspond with the Civil War. For example, the homicide and suicide rates during the 1850s and 60s are the highest compared to all other decades. What is interesting, however, is that the types of death that would seem as if there would not be a tremendous fluctuation due to war (ie: accidents and natural causes) also see a large spike during these decades. 
+
+```{r}
+#Greenville deaths by type by year
+by.year <- CSI.GVL.TIDY %>%
+  group_by(YEAR, DEATH.TYPE) %>%
+  summarize(count = n())
+
+ggplot(by.year, aes(x = DEATH.TYPE, y = count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + geom_col() + facet_wrap(~YEAR) + labs(title = "Greenville Death Type by Year")
+```
+
 
 ```{r}
 death.type <- CSI.GVL.TIDY %>%
@@ -59,14 +76,7 @@ year.count <- CSI.GVL.TIDY %>%
 ggplot(year.count, aes(x = YEAR, y = count)) +  geom_point(aes(size = count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) 
 ```
 
-```{r}
-#write code to display type of death by decade
-by.year <- CSI.GVL.TIDY %>%
-  group_by(YEAR, DEATH.TYPE) %>%
-  summarize(count = n())
 
-ggplot(by.year, aes(x = DEATH.TYPE, y = count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + geom_col() + facet_wrap(~YEAR)
-```
 
 ```{r}
 #group by decade - create a new dataframe by decade and average death types over years within that decade"
@@ -82,8 +92,6 @@ by.decade <- CSI.GVL.TIDY %>%
                           if_else(YEAR >= 1870 & YEAR < 1880, "Seventies",
                           if_else(YEAR >= 1880 & YEAR < 1890, "Eighties",
                           if_else(YEAR >= 1890 & YEAR < 1900, "Nineties",                                   "Other"))))))))))) %>% as_tibble()
-
-print(by.decade)
 ```
 
 ```{r}
@@ -113,13 +121,7 @@ total.by.decade <- by.decade %>%
 ggplot(total.by.decade, aes(x = DECADE, y = count)) +  geom_col() 
 ```
 
-In Greenville County, coroner inquests increase dramatically in from 1850 through the end of the 1880s, with the 1870s and 80s having the highest occurrences by a significant margin.
 
-Some of the type of death increases would correspond with the Civil War. For example, the homicide and suicide rates during the 1850s and 60s are the highest compared to all other decades. What is interesting, however, is that the types of death that would seem as if there would not be a tremendous fluctuation due to war (ie: accidents and natural causes) also see a large spike during these decades. 
-
-Stephen Berry in his book, Count the Dead, addresses the rise of the modern state and its correlation with the quantification of death. During the legislative session of 1849 a tremendous reform was passed through the United States Congress, almost by accident. As the last bill before the session adjorned for the year it received almost no review and was passed as speedily as possible. When Congress reconviened in 1850 there was an immediate reaction to the actual contents of the bill followed by resistance. South Carolina Senator .. 
-
-In examining the coroners inquest from Greenville County it is clear that this practice of refusing to name or further identify black individuals trickled down from the highest governmental offices to the local levels. It is also clear that infants and children of undetermined race often were not named in the inquests.
 
 ```{r}
 age.sorted <- CSI.GVL.TIDY %>%
@@ -142,89 +144,20 @@ all.sorted <- age.sorted %>%
 head(all.sorted)
 ```
 
-```{r}
-
-# library
-
- 
-# Build Dataset
-#group <- c(rep("group-1",4),rep("group-2",2),rep("group-3",3))
-#subgroup <- paste("subgroup" , c(1,2,3,4,1,2,1,2,3), sep="-")
-#value <- c(13,5,22,12,11,7,3,1,23)
-#data <- data.frame(group,subgroup,value)
- 
-# treemap
-
-#library(waffle)
-
-count.sorted <- all.sorted %>%
-  group_by(AGE, RACE) %>%
-  summarize(count = n()) 
+In examining the coroners inquest from Greenville County it is clear that this practice of refusing to name or further identify black individuals trickled down from the highest governmental offices to the local levels. It is also clear that infants and children of undetermined race often were not named in the inquests.
 
 
-ggplot(count.sorted, aes(x=, y=count)) + geom_point()
-  
-
-#waffle(count.sorted, row = 10, legend_pos = "bottom")
-
-#treemap(all.sorted,
- #           index=c("AGE","RACE"),
-  #          vSize= count,
-   #         type="index"
-    #        ) 
-```
-
-
-
-```{r}
-var <- mpg$class  # the categorical data 
-
-## Prep data (nothing to change here)
-nrows <- 10
-df <- expand.grid(y = 1:nrows, x = 1:nrows)
-categ_table <- round(table(var) * ((nrows*nrows)/(length(var))))
-categ_table
-#>   2seater    compact    midsize    minivan     pickup subcompact        suv 
-#>         2         20         18          5         14         15         26 
-
-df$category <- factor(rep(names(categ_table), categ_table))  
-# NOTE: if sum(categ_table) is not 100 (i.e. nrows^2), it will need adjustment to make the sum to 100.
-
-## Plot
-ggplot(df, aes(x = x, y = y, fill = category)) + 
-        geom_tile(color = "black", size = 0.5) +
-        scale_x_continuous(expand = c(0, 0)) +
-        scale_y_continuous(expand = c(0, 0), trans = 'reverse') +
-        scale_fill_brewer(palette = "Set3") +
-        labs(title="Waffle Chart", subtitle="'Class' of vehicles",
-             caption="Source: mpg") + 
-        theme(panel.border = element_rect(size = 2),
-              plot.title = element_text(size = rel(1.2)),
-              axis.text = element_blank(),
-              axis.title = element_blank(),
-              axis.ticks = element_blank(),
-              legend.title = element_blank(),
-              legend.position = "right")
-```
-
-
-#Explore if Greenville is different than other areas of the state. Show a difference in development of local government (ie: coroners' office)? Show a difference in demographics? Show a difference in amount/types of local industry?
-
-Anderson County Dataset and Charts
+CSI:Anderson
 
 ```{r}
 #load Anderson County data
 CSI.ANDERSON <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSZ5lXF7WTLe71GUg6Z_h6HgtoeQJ6BX1JQ7H6IgkGvrXSqzxIh720ElLPeWmzoXytW2O9J7bgL82Kg/pub?output=csv") 
-
-print(CSI.ANDERSON)
 ```
 
 ```{r}
 CSI.ANDERSON.TIDY <- CSI.ANDERSON %>%
   separate(NAME, c("FIRST.NAME", "LAST.NAME"), sep = " ", remove = FALSE) %>% #separates first and last names
   separate(DATE, c("MONTH", "DAY", "YEAR"), sep = " ", remove = FALSE) #separates dates into month, day, year
-
-head(CSI.ANDERSON.TIDY)
 ```
 
 ```{r}
@@ -241,8 +174,6 @@ by.decade.anderson <- CSI.ANDERSON.TIDY %>%
                           if_else(YEAR >= 1870 & YEAR < 1880, "Seventies",
                           if_else(YEAR >= 1880 & YEAR < 1890, "Eighties",
                           if_else(YEAR >= 1890 & YEAR < 1900, "Nineties",                                   "Other"))))))))))) %>% as_tibble()
-
-print(by.decade.anderson)
 ```
 
 ```{r}
@@ -283,21 +214,17 @@ year.count.anderson <- CSI.ANDERSON.TIDY %>%
 ggplot(year.count.anderson, aes(x = YEAR, y = count)) +  geom_point(aes(size = count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) 
 ```
 
-Chesterfield County Dataset and Charts
+CSI:Chesterfield
 
 ```{r}
 #load Chesterfield County data
 CSI.CHESTERFIELD <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSiyRbp_NP79e2pOWCwtrQRUFbZ0HrPkPI4XiR5qcREiRhq2ifqJGh0oKWSaB19GPgb2_Z5pzEOo6PN/pub?output=csv")
-
-print(CSI.CHESTERFIELD)
 ```
 
 ```{r}
 CSI.CHESTERFIELD.TIDY <- CSI.CHESTERFIELD %>%
   separate(NAME, c("FIRST.NAME", "LAST.NAME"), sep = " ", remove = FALSE) %>% #separates first and last names
   separate(DATE, c("MONTH", "DAY", "YEAR"), sep = " ", remove = FALSE) #separates dates into month, day, year
-
-head(CSI.CHESTERFIELD.TIDY)
 ```
 
 ```{r}
@@ -314,8 +241,6 @@ by.decade.chesterfield <- CSI.CHESTERFIELD.TIDY %>%
                           if_else(YEAR >= 1870 & YEAR < 1880, "Seventies",
                           if_else(YEAR >= 1880 & YEAR < 1890, "Eighties",
                           if_else(YEAR >= 1890 & YEAR < 1900, "Nineties",                                   "Other"))))))))))) %>% as_tibble()
-
-print(by.decade.chesterfield)
 ```
 
 ```{r}
@@ -332,6 +257,7 @@ ggplot(death.type.chesterfield, aes(x = DEATH.TYPE, y = count)) +  geom_col()
 #chart DEATH.TYPE by DECADE
 
 decade.count.chesterfield <- by.decade.chesterfield %>%
+  filter(YEAR < 1900) %>%
   group_by(DECADE, DEATH.TYPE) %>%
   summarize(count = n())
 
@@ -357,28 +283,24 @@ ggplot(year.count.chesterfield, aes(x = YEAR, y = count)) +  geom_point(aes(size
 ```
 
 
-Horry County Dataset and Charts
+CSI:Horry
 
 ```{r}
 #load Horry County data
 CSI.HORRY <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vQLbn85PImxeinLSgyS-CXgm3uPgp663HrzzVLeqYPa40QIaWWADQcbnhZBKR7MSHHzNFPk9PWdrBrh/pub?output=csv")
-
-print(CSI.HORRY)
 ```
 
 ```{r}
 CSI.HORRY.TIDY <- CSI.HORRY %>%
   separate(NAME, c("FIRST.NAME", "LAST.NAME"), sep = " ", remove = FALSE) %>% #separates first and last names
   separate(DATE, c("MONTH", "DAY", "YEAR"), sep = " ", remove = FALSE) #separates dates into month, day, year
-
-head(CSI.HORRY.TIDY)
 ```
 
 ```{r}
 #group by decade - create a new dataframe by decade and average death types over years within that decade"
 
 by.decade.horry <- CSI.HORRY.TIDY %>%
-  sort(CSI.HORRY.TIDY$YEAR, decreasing = FALSE, na.last = NA) %>%
+  arrange(YEAR) %>%
   mutate(DECADE = if_else(YEAR >= 1800 & YEAR < 1810, "Aughts",
                           if_else(YEAR >= 1810 & YEAR < 1820, "Tens",
                           if_else(YEAR >= 1820 & YEAR < 1830, "Twenties",
@@ -389,8 +311,6 @@ by.decade.horry <- CSI.HORRY.TIDY %>%
                           if_else(YEAR >= 1870 & YEAR < 1880, "Seventies",
                           if_else(YEAR >= 1880 & YEAR < 1890, "Eighties",
                           if_else(YEAR >= 1890 & YEAR < 1900, "Nineties",                                   "Other"))))))))))) %>% as_tibble()
-
-print(by.decade.horry)
 ```
 
 ```{r}
@@ -407,8 +327,7 @@ ggplot(death.type.horry, aes(x = DEATH.TYPE, y = count)) +  geom_col()
 #chart DEATH.TYPE by DECADE
 
 decade.count.horry <- by.decade.horry %>%
-  left_join(by.decade.horry, CSI.HORRY.TIDY, by = "DEATH.TYPE") %>%
-  sort(YEAR, decreasing, na.last = NA) %>% 
+  arrange(YEAR) %>%
   group_by(DECADE, DEATH.TYPE) %>%
   summarize(count = n())
 
@@ -433,17 +352,19 @@ year.count.horry <- CSI.HORRY.TIDY %>%
 ggplot(year.count.horry, aes(x = YEAR, y = count)) +  geom_point(aes(size = count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) 
 ```
 
-There are two contributing factors to the recorded data. First, the state of public health. Second, the advent of the recording of death. First, the state of public health. Second, the advent of the recording of death by the United States government. If the records of coroners inquests are compared between Greenville, Anderson, Chesterfield and Horry Counties the following trends emerge.
+As I examine the data and begin to form comparisons, it is important to remember the two contributing factors to the recorded data gleaned from the coroners inquests. First, the state of public health that the inquests represent. Many cultural realities effect what people and deaths were examined by a coroner in 19th century South Carolina. For example, a woman who died during childbirth would most likely not have warrented a coronor's report. Second, the advent of the recording of death. The mortality census is the first time that the United States attempted to keep track of the people and mode of death of its residents. Although flawed, Berry argues that the ability to quantify death contributed to the doubling of the life expectancy between 1850-1950.
 
 ```{r}
-#combines all tidy datasets for Greenville, Chesterfield, Anderson and Horry Counties. The reason I chose these to compare to Greenville is geographical (from other areas of the state) and well as number of records available (Anderson is similar in size to Greenville, Chesterfield is one of the largest datasets and Horry the smallest)
+#combines all tidy datasets for Greenville, Chesterfield, Anderson and Horry Counties. The reason I chose these three to compare to Greenville is geographical (from other areas of the state) and well as number of records available (Anderson is similar in size to Greenville, Chesterfield is one of the largest datasets and Horry the smallest)
 COMBINED_CSI_TIDY <- rbind(CSI.GVL.TIDY, CSI.ANDERSON.TIDY, CSI.CHESTERFIELD.TIDY, CSI.HORRY.TIDY)
 ```
 
 ```{r}
+#shows the year with the largest number of inquests from each county
 highest.year <- COMBINED_CSI_TIDY %>%
-  group_by(COUNTY) %>%
-  slice_max(YEAR)
+  group_by(COUNTY, YEAR) %>%
+  summarize(count = n()) %>%
+  slice_max(count)
 
 highest.year
 ```
@@ -451,88 +372,70 @@ highest.year
 ```{r}
 #limit the highest year to the 1800s - this is to adjust for Chesterfield being the only county with data into the 1900s as well as being the largest dataset
 highest.year.filtered <- COMBINED_CSI_TIDY %>%
-  group_by(COUNTY) %>%
+  group_by(COUNTY, YEAR) %>%
+  summarize(count = n()) %>%
   filter(YEAR < 1900) %>%
-  slice_max(YEAR)
+  slice_max(count)
 
 highest.year.filtered
 ```
 
 
-Horry County saw its highest number of inquests in 1874. Anderson in 1883, Greenville in 1884 and Chesterfield County did not record its highest number until 1950. Horry, Anderson and Greenville follow the trend of the increase in inquests after the federal reform on 1850, but Chesterfield's peak is almost a century apart. Even when limiting the data to the 19th century Chesterfield's highest year is 1899.
+Horry County saw its highest number of inquests in 1857. Anderson in 1876, Greenville in 1880 and Chesterfield County did not record its highest number until 1934. Horry, Anderson and Greenville follow the trend of the increase in inquests after the federal reform of 1850, but Chesterfield's peak is almost a half century late. Even when limiting the data to the 19th century, Chesterfield's highest year is 1894.
 
-What regional differences account for the variation in numbers of inquests? If, as Berry claims, you can judge the effectiveness of government by the health of it citizens, what accounts for the regional differences across South Carolina?
 
-```{r}
-#create dataset for all CSI:Dixie South Carolina counties and # of inquests
-CSI_DIXIE <- data_frame(COUNTY=c("Anderson", "Chesterfield", "Edgefield", "Fairfield", "Greenville", "Horry", "Kershaw", "Laurens", "Spartanburg", "Union"), STATE=("South Carolina"), NUMBER_OF_INQUESTS=c(152, 528, 515, 292, 141, 42, 262, 352, 326, 216))
+During Horry County's peak decade (1850s) the majority of inquests list homicide as the cause of death. Anderson's highest decade (1870s) saw a majority of accidents. For Greenville (1880s), accidents and natural causes are tied as the leading cause of death when a coroner prepared an inquest. Natural causes account for the majority of inquests during Chesterfield's highest 19th century decade (1890s).
 
-#geocode counties
-CSI.DIXIE.COORDINATES <- CSI_DIXIE %>% geocode(county = COUNTY, state = STATE, method='osm', lat = latitude, long = longitude)
-head(CSI.DIXIE.COORDINATES)
-```
+By more closely examining the individual records of the highest cause of death in the most documented decade in each county patterns begin to emerge:
+
+>Of the nine homicides between 1850-59, 2 were recorded by only a first name most likely indicating an African American individual.
 
 ```{r}
-state <- map_data("state")
-sc <- subset(state, region=="south carolina")
-counties <- map_data("county")
-sc_county <- subset(counties, region=="south carolina")
+#List all Horry County deaths in 1850-59 with death type descending
+horry.fifties <- by.decade.horry %>%
+  filter(DECADE == "Fifties") %>%
+  select(NAME, DECEASED.DESCRIPTION, DEATH.TYPE) %>%
+  arrange(DEATH.TYPE)
 
-sc_map <- ggplot(data=sc, mapping=aes(x=long, y=lat, group=group)) + 
-  coord_fixed(1.3) + 
-  geom_polygon(color="black", fill="gray") + 
-  geom_polygon(data=sc_county, fill=NA, color="white") + 
-  geom_polygon(color="black", fill=NA) + 
-  ggtitle('South Carolina Map with Counties') + 
-  theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(),
-        axis.title.y=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank())
-sc_map
+horry.fifties
 
-#CSI.DIXIE.COORDINATES %>% ggplot() + 
- # geom_map(data = usa, map = usa, aes(longitude, latitude, map_id=region)) +
-  #geom_point(data = CSI.DIXIE.COORDINATES, mapping = aes(x=longitude, y=latitude))
 ```
+
+> Of the eighteen accident related deaths in Anderson from 1870-79 only two are listed without first and last names. One is "Smith" and another is referred to only as "colored". Of note, one of the individual listed is John Calhoun Clemson, Thomas Green and Anna Clemson's son. He was killed in a railway accident near Seneca.
 
 ```{r}
-sc.map.data <- left_join(state, CSI.DIXIE.COORDINATES, join_by(region == STATE))
+#List all Anderon County deaths in 1870-79 with death type descending
+anderson.seventies <- by.decade.anderson %>%
+  filter(DECADE == "Seventies") %>%
+  select(NAME, DECEASED.DESCRIPTION, DEATH.TYPE) %>%
+  arrange(DEATH.TYPE)
+
+anderson.seventies
+
 ```
 
+> There are thirteen accidents tied to a coroner's report in the 1880's in Greenville. There are none listed without surnames, but Julius Brockman is described as a black boy by in the CSI:Dixie data. The thirteen deaths described as natural causes are all recorded as first and last names.
 
 ```{r}
- 
-csi.map <- sc_map + geom_point(data = sc.map.data, mapping = aes(x=longitude, y=latitude))
+#List all Greenville County deaths in 1880-89 with death type descending
+greenville.eighties <- by.decade %>%
+  filter(DECADE == "Eighties") %>%
+  select(NAME, DECEASED.DESCRIPTION, DEATH.TYPE) %>%
+  arrange(DEATH.TYPE)
 
-csi.map
+greenville.eighties
 ```
+
+>Lastly, there are 58 deaths listed as natural causes in Chesterfield in the 1890's. None of the deaths are listed with surnames or described as an African American individual.
 
 ```{r}
-state <- map_data("state")
-sc <- subset(state, region=="south carolina")
-counties <- map_data("county")
-sc_county <- subset(counties, region=="south carolina")
+#List all Chesterfield County deaths in 1890-99 with death type descending
+chesterfield.nineties <- by.decade.chesterfield %>%
+  filter(DECADE == "Nineties") %>%
+  select(NAME, DECEASED.DESCRIPTION, DEATH.TYPE) %>%
+  arrange(DEATH.TYPE)
 
-sc_map <- ggplot(data=sc, mapping=aes(x=long, y=lat, group=group))
-
-sc_map
-
-ggplot() + 
-  geom_map( data = usa, map = usa, aes(long, lat, map_id=region)) +
-  geom_point(data = gayguides, mapping = aes(x=lon, y=lat))
+chesterfield.nineties
 ```
 
-
-```{r}
-#load libraries for network graph
-library(igraph)
-library(ggraph)
-library(tidygraph)
-```
-
-
-```{r}
-#create dataframe for network graph
-officials <- data.frame
-```
-
-
-
+What regional differences account for the variation in numbers of inquests? If, as Berry claims, you can judge the effectiveness of government by the health of it citizens, what forces account for the variances in the recorded deaths across South Carolina during the 19th century?
