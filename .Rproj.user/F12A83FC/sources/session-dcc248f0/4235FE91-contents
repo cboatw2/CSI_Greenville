@@ -22,7 +22,7 @@ The reform was the newly appointed U.S. Census Chair's, Joseph C. G. Kennedy, im
 
 While Congress, especially those from southern states, beat the life out of Schedule 2, what they failed to act on was Schedule 3 which contained the questions to be asked about who had died on the propery over the preceeding year and what had caused their death. So, the first mortality census was born.
 
-The CSI:Dixie project produced by eHistory at the University of Georgia and is based on coroners reports in the South. They had created county datasets from ten South Carolina counties to date primarily from the 19th century. In this project, I beginning by examining the Greenville County dataset to understand the implications of the information from the coroners' inquests and then expand my focus to include Anderson, Chesterfield and Horry counties in order to examine regional similarities and differences.
+The CSI:Dixie project produced by eHistory at the University of Georgia and is based on coroners reports in the South. They had created county datasets from ten South Carolina counties to date primarily from the 19th century. In this project, I beginning by examining the Greenville County dataset to understand the implications of the information from the coroners' inquests and then expand my focus to include Anderson, Chesterfield and Horry counties in order to examine regional similarities and differences. Through this examination the impact of the early economic development of these counties resulting in regional variances on public health becomes apparent.
 
 ```{r}
 #load CSI:Dixie Greenville County data
@@ -38,15 +38,24 @@ CSI.GVL.TIDY <- CSI.GVL %>%
 
 CSI:Greenville:
 
-In Greenville County, coroner inquests increase dramatically in from 1850 through the end of the 1880s, with the 1870s and 80s having the highest occurrences by a significant margin.
+Greenville County was officially created in 1786. The land ceded from the Cherokee Nation after the Revolutionary War as well as lands confiscated from Loyalists became available for sale through the land grant office and was quickly bought up by newly indepedent Americans eager to reproduce the agriculatural wealth of the lowcountry of South Carolina. The 1820s brought tremendous change as infrustructure became the focus of Greenville and so much of the state and nation. The State Road project was funded, connecting Greenville to Columbia and Charleston, as well as many bridge, ferry crossing and canal projects with the goal of allowing ever increasing amounts of products to flow from over the Appalachians, through the state and to Charleston's busy international harbor.
+
+As South Carolina moved toward the middle of the 19th century, political strife began to characterize much of its residents. Duels between white men were very often threatened, and less often actually occured along the riverbanks and in old fields throughout the county. Despite the political turmoil of Nullficiation and Secesstion industry continued to develop. The fast moving rivers coming out of the mountains were well suited to mill creation and the wealthy men able to purchase large tracks of land prized areas that lent themselves to diversified economic pursuits.
+
+Until the beginning of the Civil War Greenville most important commodity was its location at the base of the mountains. The drover trade coming from Tennessee and Kentucky with livestock and other goods had a sophistacted network for alerting the livestock yards and merchants selling food and rest of their impending arrival. From the coast, the elite Charlestonians and lowcounty residents flocked to Greenville every summer to escape the disease and heat of the coast.
+
+With the federal census reforms in 1850 there is an immediate impact on the data available in Greenville County. Coroner inquests incease dramatically in from 1850 through the end of the 1880s, with the 1870s and 80s having the highest occurrences by a significant margin. 
 
 ```{r}
-#plot Greenville deaths by year
-ggplot(CSI.GVL.TIDY, aes(x = YEAR)) + theme(axis.text.x=element_text(angle=90, hjust=1)) + geom_dotplot(binwidth = 1) + labs(title = "Greenville Inquests by Year")
-
+#chart Greenville by year
+year.count <- CSI.GVL.TIDY %>%
+  group_by(YEAR) %>%
+  summarize(count = n())
+  
+ggplot(year.count, aes(x = YEAR, y = count)) +  geom_point(aes(size = count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + labs (title = "Greenville Inquests by Year")
 ```
 
-The most obvious explaination is that some types of death increases would necessarily correspond with the Civil War. For example, the homicide and suicide rates during the 1850s and 60s are the highest compared to all other decades. What is interesting, however, is that the types of death that would seem as if there would not be a tremendous fluctuation due to war (ie: accidents and natural causes) also see a large spike during these decades. 
+The most obvious explaination is that some types of death increases would necessarily correspond with the Civil War. For example, the homicide and suicide rates during the 1850s and 60s are the highest compared to all other decades. What is interesting, however, is that the types of death that would seem as if there would not be a tremendous fluctuation due to war (ie: accidents and natural causes) also see a large spike during these decades. Of the accidents that contain a description in the CSI:Dixie data almost all are related to vehicles such as wagons and trains.
 
 ```{r}
 #Greenville deaths by type by year
@@ -56,26 +65,6 @@ by.year <- CSI.GVL.TIDY %>%
 
 ggplot(by.year, aes(x = DEATH.TYPE, y = count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + geom_col() + facet_wrap(~YEAR) + labs(title = "Greenville Death Type by Year")
 ```
-
-
-```{r}
-death.type <- CSI.GVL.TIDY %>%
-  group_by(DEATH.TYPE) %>%
-  summarize(count = n())
-  
-ggplot(death.type, aes(x = DEATH.TYPE, y = count)) +  geom_col() 
-```
-
-
-```{r}
-#chart by DEATH.TYPE
-year.count <- CSI.GVL.TIDY %>%
-  group_by(YEAR) %>%
-  summarize(count = n())
-  
-ggplot(year.count, aes(x = YEAR, y = count)) +  geom_point(aes(size = count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) 
-```
-
 
 
 ```{r}
@@ -101,27 +90,11 @@ decade.count <- by.decade %>%
   group_by(DECADE, DEATH.TYPE) %>%
   summarize(count = n())
 
-ggplot(decade.count, aes(DEATH.TYPE, count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + geom_col() + facet_wrap(~DECADE)
+ggplot(decade.count, aes(DEATH.TYPE, count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + geom_col() + facet_wrap(~DECADE) + labs(title = "Greenville Death by Decade")
 ```
 
-```{r}
-by.year <- CSI.GVL.TIDY %>%
-  group_by(YEAR, DEATH.TYPE) %>%
-  summarize(count = n()) %>%
-
-ggplot(aes(x = DEATH.TYPE, y = count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + geom_col() + facet_wrap(~YEAR)
-```
-
-```{r}
-#chart total number of deaths by decade
-total.by.decade <- by.decade %>%
-  group_by(NAME, DECADE) %>%
-  summarize(count = n())
-  
-ggplot(total.by.decade, aes(x = DECADE, y = count)) +  geom_col() 
-```
-
-
+In addition to the mode of death, the inquest data gives insight into the people dying in Greenville. It's important to notice what information is not included,
+especially for black South Carolinians.
 
 ```{r}
 age.sorted <- CSI.GVL.TIDY %>%
@@ -146,8 +119,12 @@ head(all.sorted)
 
 In examining the coroners inquest from Greenville County it is clear that this practice of refusing to name or further identify black individuals trickled down from the highest governmental offices to the local levels. It is also clear that infants and children of undetermined race often were not named in the inquests.
 
+Comparing the overall trends of the Greenville dataset with those from Anderson, Horry and Chesterfield provide additional insights. I chose these in an attempt to understad what regional differences account for the variation in numbers of inquests? If, as Berry claims, you can judge the effectiveness of government by the health of it citizens, what forces account for the variances in the recorded deaths across South Carolina during the 19th century? Also, Anderson's dataset is very similar in size to Greenville, whereas Horry County is the smallest and Chesterfield is one of the largest so they provide a repsentative sample.
+
 
 CSI:Anderson
+
+Anderson County follows a very similar development pattern that Greenville experienced after the Revolutionary War. Population expansion in the early 1800s caused the larger Pendleton District to be divided into Anderson and Pickens Districts. Like Greenville, Anderson is primarily agricultural will a healthy industrial economy due to the establishment of mills.
 
 ```{r}
 #load Anderson County data
@@ -159,6 +136,16 @@ CSI.ANDERSON.TIDY <- CSI.ANDERSON %>%
   separate(NAME, c("FIRST.NAME", "LAST.NAME"), sep = " ", remove = FALSE) %>% #separates first and last names
   separate(DATE, c("MONTH", "DAY", "YEAR"), sep = " ", remove = FALSE) #separates dates into month, day, year
 ```
+```{r}
+#chart Anderson by year count
+year.count.anderson <- CSI.ANDERSON.TIDY %>%
+  group_by(YEAR) %>%
+  summarize(count = n())
+  
+ggplot(year.count.anderson, aes(x = YEAR, y = count)) +  geom_point(aes(size = count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + labs (title = "Anderson Inquests by Year")
+```
+
+
 
 ```{r}
 #group by decade - create a new dataframe by decade and average death types over years within that decade"
@@ -182,7 +169,7 @@ death.type.anderson <- CSI.ANDERSON.TIDY %>%
   group_by(DEATH.TYPE) %>%
   summarize(count = n())
   
-ggplot(death.type.anderson, aes(x = DEATH.TYPE, y = count)) +  geom_col() 
+ggplot(death.type.anderson, aes(x = DEATH.TYPE, y = count)) +  geom_col() + labs (title = "Anderson Death Type Ranked")
 ```
 
 
@@ -193,28 +180,12 @@ decade.count.anderson <- by.decade.anderson %>%
   group_by(DECADE, DEATH.TYPE) %>%
   summarize(count = n())
 
-ggplot(decade.count.anderson, aes(DEATH.TYPE, count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + geom_col() + facet_wrap(~DECADE)
-```
-
-```{r}
-#chart total number of Anderson deaths by decade
-total.anderson.by.decade <- by.decade.anderson %>%
-  group_by(NAME, DECADE) %>%
-  summarize(count = n())
-  
-ggplot(total.anderson.by.decade, aes(x = DECADE, y = count)) +  geom_col() 
-```
-
-```{r}
-#chart Anderson by year count
-year.count.anderson <- CSI.ANDERSON.TIDY %>%
-  group_by(YEAR) %>%
-  summarize(count = n())
-  
-ggplot(year.count.anderson, aes(x = YEAR, y = count)) +  geom_point(aes(size = count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) 
+ggplot(decade.count.anderson, aes(DEATH.TYPE, count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + geom_col() + facet_wrap(~DECADE) + labs (title = "Anderson Death by Decade")
 ```
 
 CSI:Chesterfield
+
+Chesterfield County lies on the South Carolina fall zone and shares a border with North Carolina. It was organized and its courthouse built in 1785. The advent of the steamboat linked Chesterfield with North Carolina and Winyah Bay in Georgetown, South Carolina and brought rapid prosperity to it in the 1820s when it became a stopover town on the Pee Dee River.  Its economy still remained largely rural and agricultural until after the Civil War and the arrival of the railroads connecting its pine barren timber to outside markets. It experienced a 55% increase in population during the 1880’s leading up to its highest inquest count in 1894. For it’s true inquest high point in the 1950’s, though, there was no corresponding population spike. 
 
 ```{r}
 #load Chesterfield County data
@@ -226,7 +197,14 @@ CSI.CHESTERFIELD.TIDY <- CSI.CHESTERFIELD %>%
   separate(NAME, c("FIRST.NAME", "LAST.NAME"), sep = " ", remove = FALSE) %>% #separates first and last names
   separate(DATE, c("MONTH", "DAY", "YEAR"), sep = " ", remove = FALSE) #separates dates into month, day, year
 ```
-
+```{r}
+#chart Chesterfield by year count
+year.count.chesterfield <- CSI.CHESTERFIELD.TIDY %>%
+  group_by(YEAR) %>%
+  summarize(count = n())
+  
+ggplot(year.count.chesterfield, aes(x = YEAR, y = count)) +  geom_point(aes(size = count)) + theme(axis.text.x=element_text(angle=90,hjust=1, size=5)) + labs (title = "Chesterfield Inquests by Year")
+```
 ```{r}
 #group by decade - create a new dataframe by decade and average death types over years within that decade"
 
@@ -249,7 +227,7 @@ death.type.chesterfield <- CSI.CHESTERFIELD.TIDY %>%
   group_by(DEATH.TYPE) %>%
   summarize(count = n())
   
-ggplot(death.type.chesterfield, aes(x = DEATH.TYPE, y = count)) +  geom_col() 
+ggplot(death.type.chesterfield, aes(x = DEATH.TYPE, y = count)) +  geom_col() + labs (title = "Chesterfield Death Type Ranked")
 ```
 
 
@@ -261,29 +239,13 @@ decade.count.chesterfield <- by.decade.chesterfield %>%
   group_by(DECADE, DEATH.TYPE) %>%
   summarize(count = n())
 
-ggplot(decade.count.chesterfield, aes(DEATH.TYPE, count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + geom_col() + facet_wrap(~DECADE)
+ggplot(decade.count.chesterfield, aes(DEATH.TYPE, count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + geom_col() + facet_wrap(~DECADE) + labs (title = "Chesterfield Death by Decade")
 ```
-
-```{r}
-#chart total number of Chesterfield deaths by decade
-total.chesterfield.by.decade <- by.decade.chesterfield %>%
-  group_by(NAME, DECADE) %>%
-  summarize(count = n())
-  
-ggplot(total.chesterfield.by.decade, aes(x = DECADE, y = count)) +  geom_col() 
-```
-
-```{r}
-#chart Chesterfield by year count
-year.count.chesterfield <- CSI.CHESTERFIELD.TIDY %>%
-  group_by(YEAR) %>%
-  summarize(count = n())
-  
-ggplot(year.count.chesterfield, aes(x = YEAR, y = count)) +  geom_point(aes(size = count)) + theme(axis.text.x=element_text(angle=90,hjust=1, size=5)) 
-```
-
 
 CSI:Horry
+
+Horry County is the location of present day Myrtle Beach, South Carolina. The site of the first European settlement site in Winyah Bay in the 1530’s, its development through the colonial period was marked by its isolation. It did not develop into a coastal hub like Charleston and Beaufort because its low-lying swampy land made it less suitable for indigo and rice cultivation as well as its separation from the west and south by the Pee Dee Swamp. Its sparse population and isolation continued the Revolutionary War and into the antebellum period. Horry County experienced a 33% population boom in 1850 with a corresponding increase in the black enslaved population, but the black population always stayed significantly lower than the white. Small farm agriculture dominated the economy of Horry County through the antebellum period, but industry such as mills what much higher by comparison to much of the state.
+
 
 ```{r}
 #load Horry County data
@@ -294,6 +256,14 @@ CSI.HORRY <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vQLbn85PI
 CSI.HORRY.TIDY <- CSI.HORRY %>%
   separate(NAME, c("FIRST.NAME", "LAST.NAME"), sep = " ", remove = FALSE) %>% #separates first and last names
   separate(DATE, c("MONTH", "DAY", "YEAR"), sep = " ", remove = FALSE) #separates dates into month, day, year
+```
+```{r}
+#chart Horry by year count
+year.count.horry <- CSI.HORRY.TIDY %>%
+  group_by(YEAR) %>%
+  summarize(count = n())
+  
+ggplot(year.count.horry, aes(x = YEAR, y = count)) +  geom_point(aes(size = count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + labs (title = "Horry Inquests by Year")
 ```
 
 ```{r}
@@ -319,7 +289,7 @@ death.type.horry <- CSI.HORRY.TIDY %>%
   group_by(DEATH.TYPE) %>%
   summarize(count = n())
   
-ggplot(death.type.horry, aes(x = DEATH.TYPE, y = count)) +  geom_col() 
+ggplot(death.type.horry, aes(x = DEATH.TYPE, y = count)) +  geom_col() + labs (title = "Horry Death Ranked")
 ```
 
 
@@ -331,28 +301,10 @@ decade.count.horry <- by.decade.horry %>%
   group_by(DECADE, DEATH.TYPE) %>%
   summarize(count = n())
 
-ggplot(decade.count.horry, aes(DEATH.TYPE, count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + geom_col() + facet_wrap(~DECADE)
+ggplot(decade.count.horry, aes(DEATH.TYPE, count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + geom_col() + facet_wrap(~DECADE) + labs (title = "Horry Death by Decade")
 ```
 
-```{r}
-#chart total number of Horry deaths by decade
-total.horry.by.decade <- by.decade.horry %>%
-  group_by(NAME, DECADE) %>%
-  summarize(count = n())
-  
-ggplot(total.horry.by.decade, aes(x = DECADE, y = count)) +  geom_col() 
-```
-
-```{r}
-#chart Horry by year count
-year.count.horry <- CSI.HORRY.TIDY %>%
-  group_by(YEAR) %>%
-  summarize(count = n())
-  
-ggplot(year.count.horry, aes(x = YEAR, y = count)) +  geom_point(aes(size = count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) 
-```
-
-As I examine the data and begin to form comparisons, it is important to remember the two contributing factors to the recorded data gleaned from the coroners inquests. First, the state of public health that the inquests represent. Many cultural realities effect what people and deaths were examined by a coroner in 19th century South Carolina. For example, a woman who died during childbirth would most likely not have warrented a coronor's report. Second, the advent of the recording of death. The mortality census is the first time that the United States attempted to keep track of the people and mode of death of its residents. Although flawed, Berry argues that the ability to quantify death contributed to the doubling of the life expectancy between 1850-1950.
+As I examine the data and begin to form comparisons, it is important to remember the two contributing factors to the recorded data gleaned from the coroners inquests. First, the state of public health that the inquests represent. Many cultural realities effect what people and deaths were examined by a coroner in 19th century South Carolina. For example, a woman who died during childbirth would most likely not have warrented a coronor's report. Second, the advent of the recording of death. The mortality census is the first time that the United States attempted to keep track of the people and mode of death of its residents. Berry argues that the ability to quantify death, although flawed, contributed to the doubling of the life expectancy between 1850-1950.
 
 ```{r}
 #combines all tidy datasets for Greenville, Chesterfield, Anderson and Horry Counties. The reason I chose these three to compare to Greenville is geographical (from other areas of the state) and well as number of records available (Anderson is similar in size to Greenville, Chesterfield is one of the largest datasets and Horry the smallest)
@@ -438,4 +390,17 @@ chesterfield.nineties <- by.decade.chesterfield %>%
 chesterfield.nineties
 ```
 
-What regional differences account for the variation in numbers of inquests? If, as Berry claims, you can judge the effectiveness of government by the health of it citizens, what forces account for the variances in the recorded deaths across South Carolina during the 19th century?
+Conclusion
+
+Although there is a great deal to be learned from assmbling the coroner inquests that remain from the 19th century in South Carolina, in limiting my focus to a few counties that represent the different regions of that state it seems clear to me that the deaths directly coincide to the economies of these regions. Accidents and natural causes are the leading causes of death in Greenville, Anderson and Chesterfield during their peak decades of recorded coroner inquests. Accidents, especially industrial and vehicle accidents, are the top listed causes of death in the Piedmont region in the 1870-80s in Anderson and Greenville. This directly corresponds to the years after the Civil War and the rebuilding of a more industrial economy. The natural deaths in Chesterfield in the 1890s speaks to the lack of industry and rural natural of that region, especially after the devestation of the Civil War. Horry County is a bit of an outlier, but again, examining its early economic development the rate of homicides during the 1850s and the relatively high percentage of black deaths, this can be seen through the lens of plantation economics as well as the slave uprisings in the days leading up to Civil War.
+
+
+Bibliography
+
+Berry, Stephen. Count the Dead: Coroners, Quants, and the Birth of Death As We Know It. Chapel Hill, North Carolina: University of North Carolina Press, 2022.
+
+Edgar, Walter. South Carolina: A History. Columbia, S.C.: University of South Carolina Press, 1999.
+
+Huff Jr., Archie Vernon. Greenville: The History of the City and County in the South Carolina Piedmont. Columbia, S.C.: University of South Carolina Press, 1995.
+
+Lewis, Catherine H. Horry County, South Carolina, 1730-1993. Columbia, S.C.: University of South Carolina Press, 1998.
