@@ -16,13 +16,11 @@ library(tm)
 
 
 
-Stephen Berry in his book, Count the Dead, addresses the rise of the modern state and its correlation with the quantification of death. During the legislative session of 1849 a tremendous reform was passed through the United States Congress, almost by accident. As the last bill before the session adjourned for the year it received almost no review and was passed as speedily as possible. 
+Stephen Berry in his 2022 book, Count The Dead, addresses the rise of the modern state and its correlation with the quantification of death. During the legislative session of 1849 a tremendous reform was passed through the United States Congress, almost by accident. As the last bill before the session adjourned for the year it received almost no review and was passed as speedily as possible. 
 
-The reform was the newly appointed U.S. Census Chair's, Joseph C. G. Kennedy, implementation of a census questionairre to be admistered by federal agents traveling throughout the country. The questionairre contained six schedules, the second was to record information on the enslaved persons living on the premesis including their names and place of birth. When Congress reconvened in 1850 there was an immediate reaction to the bill followed by resistance. South Carolina Senator Andrew Butler moved that no names of enslaved persons should be recorded and Senator William King of Alabama quickly followed by demanding no city of birth be recorded for the enslaved. Both motions were speedily carried. (Berry, Count The Dead, 18-21)
+The reform was the newly appointed U.S. Census Chair's, Joseph C. G. Kennedy, implementation of a census questionnaire to be administered by federal agents traveling throughout the country. The questionnaire contained six schedules, the second was to record information on the enslaved persons living on a property including their names and place of birth. While Congress, especially those from southern states, beat the life out of Schedule 2, what they failed to act on was Schedule 3 which contained the questions to be asked about who had died on a property over the preceding year and what had caused their death. So, the first mortality census was born. (Berry, Count The Dead, 18-21)
 
-While Congress, especially those from southern states, beat the life out of Schedule 2, what they failed to act on was Schedule 3 which contained the questions to be asked about who had died on the propery over the preceeding year and what had caused their death. So, the first mortality census was born.
-
-The CSI:Dixie project produced by eHistory at the University of Georgia and is based on coroners reports in the South. They had created county datasets from ten South Carolina counties to date primarily from the 19th century. In this project, I beginning by examining the Greenville County dataset to understand the implications of the information from the coroners' inquests and then expand my focus to include Anderson, Chesterfield and Horry counties in order to examine regional similarities and differences. Through this examination the impact of the early economic development of these counties resulting in regional variances on public health becomes apparent.
+The CSI:Dixie project produced by eHistory at the University of Georgia is based on coroners reports in the South primarily from the 19th century. Ten county datasets from South Carolina counties have been created to date. In this project, I begin by examining the Greenville County dataset to understand the implications of the information from the coroners' inquests and then expand my focus to include Anderson, Chesterfield and Horry counties in order to examine regional similarities and differences. Through this examination the impact of the early economic development of these counties resulting in regional variances on public health becomes apparent.
 
 ```{r}
 #load CSI:Dixie Greenville County data
@@ -36,15 +34,15 @@ CSI.GVL.TIDY <- CSI.GVL %>%
   separate(DATE, c("MONTH", "DAY", "YEAR"), sep = " ", remove = FALSE) #separates dates into month, day, year
 ```
 
-CSI:Greenville:
+CSI:Greenville
 
-Greenville County was officially created in 1786. The land ceded from the Cherokee Nation after the Revolutionary War as well as lands confiscated from Loyalists became available for sale through the land grant office and was quickly bought up by newly indepedent Americans eager to reproduce the agriculatural wealth of the lowcountry of South Carolina. The 1820s brought tremendous change as infrustructure became the focus of Greenville and so much of the state and nation. The State Road project was funded, connecting Greenville to Columbia and Charleston, as well as many bridge, ferry crossing and canal projects with the goal of allowing ever increasing amounts of products to flow from over the Appalachians, through the state and to Charleston's busy international harbor.
+Greenville County was officially created in 1786. The land ceded from the Cherokee Nation after the Revolutionary War as well as lands confiscated from Loyalists became available for sale through the land grant office and was quickly bought up by newly independent Americans eager to reproduce the agricultural wealth of the lowcountry of South Carolina. The 1820s brought tremendous change as infrastructure became the focus of Greenville and so much of the state and nation as a whole. The State Road project was funded, connecting Greenville to Columbia and Charleston, as well as many bridge, ferry crossing and canal projects.
 
-As South Carolina moved toward the middle of the 19th century, political strife began to characterize much of its residents. Duels between white men were very often threatened, and less often actually occured along the riverbanks and in old fields throughout the county. Despite the political turmoil of Nullficiation and Secesstion industry continued to develop. The fast moving rivers coming out of the mountains were well suited to mill creation and the wealthy men able to purchase large tracks of land prized areas that lent themselves to diversified economic pursuits.
+As South Carolina moved toward the middle of the 19th century, political strife began to characterize much of its residents' interactions. Duels between white men were very often threatened, and (less often) occurred along the riverbanks and in old fields throughout the county. Despite the political turmoil of Nullification and Secession, industry continued to develop. The fast moving rivers coming out of the mountains were well suited to mill creation and the wealthy men able to purchase large tracts of land prized areas that lent themselves to diversified economic pursuits.
 
-Until the beginning of the Civil War Greenville most important commodity was its location at the base of the mountains. The drover trade coming from Tennessee and Kentucky with livestock and other goods had a sophistacted network for alerting the livestock yards and merchants selling food and rest of their impending arrival. From the coast, the elite Charlestonians and lowcounty residents flocked to Greenville every summer to escape the disease and heat of the coast.
+Until the beginning of the Civil War Greenville's most important commodity was its location at the base of the Appalachians. The drover trade coming from Tennessee and Kentucky with livestock and other goods had a sophisticated network for alerting the livestock yards and merchants selling food and rest of their impending arrival. From the coast, the elite Charlestonians and lowcounty residents flocked to Greenville every summer to escape the disease and heat of the coast.
 
-With the federal census reforms in 1850 there is an immediate impact on the data available in Greenville County. Coroner inquests incease dramatically in from 1850 through the end of the 1880s, with the 1870s and 80s having the highest occurrences by a significant margin. 
+With the federal census reforms in 1850 there is an immediate impact on the data available in Greenville County. Coroner inquests increased dramatically from 1850 through the end of the 1880s, with the 1870s and 80s having the highest occurrences by a significant margin. 
 
 ```{r}
 #chart Greenville by year
@@ -55,7 +53,7 @@ year.count <- CSI.GVL.TIDY %>%
 ggplot(year.count, aes(x = YEAR, y = count)) +  geom_point(aes(size = count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + labs (title = "Greenville Inquests by Year")
 ```
 
-The most obvious explaination is that some types of death increases would necessarily correspond with the Civil War. For example, the homicide and suicide rates during the 1850s and 60s are the highest compared to all other decades. What is interesting, however, is that the types of death that would seem as if there would not be a tremendous fluctuation due to war (ie: accidents and natural causes) also see a large spike during these decades. Of the accidents that contain a description in the CSI:Dixie data almost all are related to vehicles such as wagons and trains.
+The most obvious explanation is that some types of death increases would necessarily correspond with the Civil War. For example, the homicide and suicide rates during the 1850s and 60s are the highest compared to all other decades. What is interesting, however, is that the types of death that would seem as if there would not be a tremendous fluctuation due to war (ie: accidents and natural causes) also see a large spike during these decades. Of the accidents in Greenville that contain a description in the CSI:Dixie data almost all are related to vehicles such as wagons and trains.
 
 ```{r}
 #Greenville deaths by type by year
@@ -93,8 +91,7 @@ decade.count <- by.decade %>%
 ggplot(decade.count, aes(DEATH.TYPE, count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + geom_col() + facet_wrap(~DECADE) + labs(title = "Greenville Death by Decade")
 ```
 
-In addition to the mode of death, the inquest data gives insight into the people dying in Greenville. It's important to notice what information is not included,
-especially for black South Carolinians.
+In addition to the mode of death, the inquest data gives insight into the people dying in Greenville. It's important to notice what information is not included, especially for black South Carolinians.
 
 ```{r}
 age.sorted <- CSI.GVL.TIDY %>%
@@ -117,14 +114,14 @@ all.sorted <- age.sorted %>%
 head(all.sorted)
 ```
 
-In examining the coroners inquest from Greenville County it is clear that this practice of refusing to name or further identify black individuals trickled down from the highest governmental offices to the local levels. It is also clear that infants and children of undetermined race often were not named in the inquests.
+In examining the coroners inquest from Greenville County it is clear that this practice of refusing to name or further identify black individuals trickled down from the highest governmental offices to the local levels. It is also clear that infants and children of undetermined race were often not named in the inquests.
 
-Comparing the overall trends of the Greenville dataset with those from Anderson, Horry and Chesterfield provide additional insights. I chose these in an attempt to understad what regional differences account for the variation in numbers of inquests? If, as Berry claims, you can judge the effectiveness of government by the health of it citizens, what forces account for the variances in the recorded deaths across South Carolina during the 19th century? Also, Anderson's dataset is very similar in size to Greenville, whereas Horry County is the smallest and Chesterfield is one of the largest so they provide a repsentative sample.
+Comparing the overall trends of the Greenville dataset with those from Anderson, Horry and Chesterfield provide additional insights. I chose these in an attempt to understand what regional differences account for the variation in numbers of inquests? If, as Berry claims, you can judge the effectiveness of government by the health of its citizens, what forces account for the variances in the recorded deaths across South Carolina during the 19th century? Also, Anderson's dataset is very similar in size to Greenville, whereas Horry County is the smallest and Chesterfield is one of the largest so they provide a representative sample.
 
 
 CSI:Anderson
 
-Anderson County follows a very similar development pattern that Greenville experienced after the Revolutionary War. Population expansion in the early 1800s caused the larger Pendleton District to be divided into Anderson and Pickens Districts. Like Greenville, Anderson is primarily agricultural will a healthy industrial economy due to the establishment of mills.
+Anderson County follows a very similar development pattern to Greenville after the Revolutionary War. Population expansion in the early 1800s caused the larger Pendleton District to be divided into Anderson and Pickens Districts. Like Greenville, Anderson is primarily agricultural with a healthy industrial economy due to the establishment of mills.
 
 ```{r}
 #load Anderson County data
@@ -185,7 +182,7 @@ ggplot(decade.count.anderson, aes(DEATH.TYPE, count)) + theme(axis.text.x=elemen
 
 CSI:Chesterfield
 
-Chesterfield County lies on the South Carolina fall zone and shares a border with North Carolina. It was organized and its courthouse built in 1785. The advent of the steamboat linked Chesterfield with North Carolina and Winyah Bay in Georgetown, South Carolina and brought rapid prosperity to it in the 1820s when it became a stopover town on the Pee Dee River.  Its economy still remained largely rural and agricultural until after the Civil War and the arrival of the railroads connecting its pine barren timber to outside markets. It experienced a 55% increase in population during the 1880’s leading up to its highest inquest count in 1894. For it’s true inquest high point in the 1950’s, though, there was no corresponding population spike. 
+Chesterfield County lies on the South Carolina fall zone and shares a border with North Carolina. It was organized and its courthouse built in 1785. The advent of the steamboat linked Chesterfield with North Carolina and Winyah Bay in Georgetown, South Carolina and brought rapid prosperity in the 1820s when it became a stopover town on the Pee Dee River.  Its economy still remained largely rural and agricultural until after the Civil War and the arrival of the railroads connecting its pine barren timber to outside markets. It experienced a 55% increase in population during the 1880’s leading up to its highest inquest count in 1894. For its true inquest high point in the 1950’s, though, there was no corresponding population spike. 
 
 ```{r}
 #load Chesterfield County data
@@ -244,7 +241,7 @@ ggplot(decade.count.chesterfield, aes(DEATH.TYPE, count)) + theme(axis.text.x=el
 
 CSI:Horry
 
-Horry County is the location of present day Myrtle Beach, South Carolina. The site of the first European settlement site in Winyah Bay in the 1530’s, its development through the colonial period was marked by its isolation. It did not develop into a coastal hub like Charleston and Beaufort because its low-lying swampy land made it less suitable for indigo and rice cultivation as well as its separation from the west and south by the Pee Dee Swamp. Its sparse population and isolation continued the Revolutionary War and into the antebellum period. Horry County experienced a 33% population boom in 1850 with a corresponding increase in the black enslaved population, but the black population always stayed significantly lower than the white. Small farm agriculture dominated the economy of Horry County through the antebellum period, but industry such as mills what much higher by comparison to much of the state.
+Horry County is the location of present day Myrtle Beach, South Carolina. The site of the first European settlement site in Winyah Bay in the 1530’s, its development through the colonial period was marked by its isolation. It did not develop into a coastal hub like Charleston and Beaufort because its low-lying swampy land made it less suitable for indigo and rice cultivation as well as its separation from the west and south by the Pee Dee Swamp. Its sparse population and isolation continued the Revolutionary War and into the antebellum period. Horry County experienced a 33% population boom in 1850 with a corresponding increase in the black enslaved population, but the black population always stayed significantly lower than the white. Small farm agriculture dominated the economy of Horry County through the antebellum period, but industries such as mills were much higher by comparison to much of the state.
 
 
 ```{r}
@@ -304,7 +301,7 @@ decade.count.horry <- by.decade.horry %>%
 ggplot(decade.count.horry, aes(DEATH.TYPE, count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + geom_col() + facet_wrap(~DECADE) + labs (title = "Horry Death by Decade")
 ```
 
-As I examine the data and begin to form comparisons, it is important to remember the two contributing factors to the recorded data gleaned from the coroners inquests. First, the state of public health that the inquests represent. Many cultural realities effect what people and deaths were examined by a coroner in 19th century South Carolina. For example, a woman who died during childbirth would most likely not have warrented a coronor's report. Second, the advent of the recording of death. The mortality census is the first time that the United States attempted to keep track of the people and mode of death of its residents. Berry argues that the ability to quantify death, although flawed, contributed to the doubling of the life expectancy between 1850-1950.
+As points of comparison emerge from the data it is important to remember the two contributing factors to the recorded data gleaned from the coroners inquests. First, the state of public health that the inquests represent. Many cultural realities affect which people and deaths were examined by a coroner in 19th century South Carolina. For example, a woman who died during childbirth would most likely not have warranted a coroner's report. Second, how recent the advent of the recording of death was in the 19th century. The mortality census is the first time that the United States attempted to keep track of the people and mode of death of its residents. Berry argues that the ability to quantify death, although flawed, contributed to the doubling of the life expectancy between 1850-1950.
 
 ```{r}
 #combines all tidy datasets for Greenville, Chesterfield, Anderson and Horry Counties. The reason I chose these three to compare to Greenville is geographical (from other areas of the state) and well as number of records available (Anderson is similar in size to Greenville, Chesterfield is one of the largest datasets and Horry the smallest)
@@ -333,12 +330,10 @@ highest.year.filtered
 ```
 
 
-Horry County saw its highest number of inquests in 1857. Anderson in 1876, Greenville in 1880 and Chesterfield County did not record its highest number until 1934. Horry, Anderson and Greenville follow the trend of the increase in inquests after the federal reform of 1850, but Chesterfield's peak is almost a half century late. Even when limiting the data to the 19th century, Chesterfield's highest year is 1894.
+Horry County saw its highest number of inquests in 1857 listing homicide as the cause of death. Anderson in 1876 with a majority of accidents, Greenville in 1880 with accidents and natural causes even, and Chesterfield County did not record its highest number until 1934 with natural causes listed as the leading cause of death. Horry, Anderson and Greenville follow the trend of the increase in inquests after the federal reform of 1850, but Chesterfield's peak is almost a half century late. Even when limiting the  data to the 19th century, Chesterfield's highest year is 1894.
 
 
-During Horry County's peak decade (1850s) the majority of inquests list homicide as the cause of death. Anderson's highest decade (1870s) saw a majority of accidents. For Greenville (1880s), accidents and natural causes are tied as the leading cause of death when a coroner prepared an inquest. Natural causes account for the majority of inquests during Chesterfield's highest 19th century decade (1890s).
-
-By more closely examining the individual records of the highest cause of death in the most documented decade in each county patterns begin to emerge:
+By more closely examining the individual records of the highest cause of death in the most documented decade in each county patterns begin to emerge especially around the treatment of black South Carolinians:
 
 >Of the nine homicides between 1850-59, 2 were recorded by only a first name most likely indicating an African American individual.
 
@@ -392,7 +387,7 @@ chesterfield.nineties
 
 Conclusion
 
-Although there is a great deal to be learned from assmbling the coroner inquests that remain from the 19th century in South Carolina, in limiting my focus to a few counties that represent the different regions of that state it seems clear to me that the deaths directly coincide to the economies of these regions. Accidents and natural causes are the leading causes of death in Greenville, Anderson and Chesterfield during their peak decades of recorded coroner inquests. Accidents, especially industrial and vehicle accidents, are the top listed causes of death in the Piedmont region in the 1870-80s in Anderson and Greenville. This directly corresponds to the years after the Civil War and the rebuilding of a more industrial economy. The natural deaths in Chesterfield in the 1890s speaks to the lack of industry and rural natural of that region, especially after the devestation of the Civil War. Horry County is a bit of an outlier, but again, examining its early economic development the rate of homicides during the 1850s and the relatively high percentage of black deaths, this can be seen through the lens of plantation economics as well as the slave uprisings in the days leading up to Civil War.
+Although there is a great deal to be learned from assembling the coroner inquests that remain from the 19th century in South Carolina, in limiting my focus to a few counties that represent the different regions of that state it seems clear to me that the deaths directly coincide with the economies of these regions. Accidents and natural causes are the leading causes of death in Greenville, Anderson and Chesterfield during their peak decades of recorded coroner inquests. Accidents, especially industrial and vehicle accidents, are the top listed causes of death in the Piedmont region in the 1870-80s. This directly corresponds to the years after the Civil War and the rebuilding of a more industrialized economy. The natural deaths in Chesterfield in the 1890s speaks to the lack of industry and rural nature of that region, especially after the devastation of the Civil War. Horry County is a bit of an outlier, but again, examining its early economic development the rate of homicides during the 1850s and the relatively high percentage of black deaths, this can be seen through the lens of plantation economics as well as the slave uprisings in the days leading up to Civil War.
 
 
 Bibliography
