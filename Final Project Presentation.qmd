@@ -1,0 +1,30 @@
+---
+title: "CSI:Greenville Presentation"
+author: "Candy Boatwright"
+format: revealjs
+---
+
+My project uses the dataset for Greenville, Anderson, Chesterfield and Horry counties from the CSI:Dixie project developed by eHistory at the University of Georgia
+
+
+```{r}
+
+library(tidytext)
+library(tidyverse)
+library(readtext)
+library(tm)
+
+CSI.GVL <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vQzO3uN1w0-A_rN3bHuBWDr1iQe9hPZ68u7igu-I8wWDEpHSWH5T3AQFPvaa-VMSbuB8Z8X5wxSjmA6/pub?output=csv") 
+
+CSI.GVL.TIDY <- CSI.GVL %>%
+  separate(NAME, c("FIRST.NAME", "LAST.NAME"), sep = " ", remove = FALSE) %>%
+  separate(DATE, c("MONTH", "DAY", "YEAR"), sep = " ", remove = FALSE)
+
+year.count <- CSI.GVL.TIDY %>%
+  group_by(YEAR) %>%
+  summarize(count = n())
+  
+ggplot(year.count, aes(x = YEAR, y = count)) +  geom_point(aes(size = count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + labs (title = "Greenville Inquests by Year")
+```
+
+

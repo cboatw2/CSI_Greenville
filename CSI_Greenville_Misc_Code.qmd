@@ -4,6 +4,64 @@ format: html
 ---
 
 ```{r}
+#plot Greenville deaths by year
+ggplot(CSI.GVL.TIDY, aes(x = YEAR)) + theme(axis.text.x=element_text(angle=90, hjust=1)) + geom_dotplot(binwidth = 1) + labs(title = "Greenville Inquests by Year")
+
+```
+
+```{r}
+by.year <- CSI.GVL.TIDY %>%
+  group_by(YEAR, DEATH.TYPE) %>%
+  summarize(count = n()) %>%
+
+ggplot(aes(x = DEATH.TYPE, y = count)) + theme(axis.text.x=element_text(angle=90,hjust=1)) + geom_col() + facet_wrap(~YEAR)
+```
+
+```{r}
+death.type <- CSI.GVL.TIDY %>%
+  group_by(DEATH.TYPE) %>%
+  summarize(count = n())
+  
+ggplot(death.type, aes(x = DEATH.TYPE, y = count)) +  geom_col() 
+```
+
+```{r}
+#chart total number of deaths by decade
+total.by.decade <- by.decade %>%
+  group_by(NAME, DECADE) %>%
+  summarize(count = n())
+  
+ggplot(total.by.decade, aes(x = DECADE, y = count)) +  geom_col() 
+```
+
+```{r}
+#chart total number of Anderson deaths by decade
+total.anderson.by.decade <- by.decade.anderson %>%
+  group_by(NAME, DECADE) %>%
+  summarize(count = n())
+  
+ggplot(total.anderson.by.decade, aes(x = DECADE, y = count)) +  geom_col() 
+```
+
+```{r}
+#chart total number of Chesterfield deaths by decade
+total.chesterfield.by.decade <- by.decade.chesterfield %>%
+  group_by(NAME, DECADE) %>%
+  summarize(count = n())
+  
+ggplot(total.chesterfield.by.decade, aes(x = DECADE, y = count)) +  geom_col() 
+```
+
+```{r}
+#chart total number of Horry deaths by decade
+total.horry.by.decade <- by.decade.horry %>%
+  group_by(NAME, DECADE) %>%
+  summarize(count = n())
+  
+ggplot(total.horry.by.decade, aes(x = DECADE, y = count)) +  geom_col() 
+```
+
+```{r}
 #create dataset for all CSI:Dixie South Carolina counties and # of inquests
 CSI_DIXIE <- data_frame(COUNTY=c("Anderson", "Chesterfield", "Edgefield", "Fairfield", "Greenville", "Horry", "Kershaw", "Laurens", "Spartanburg", "Union"), STATE=("South Carolina"), NUMBER_OF_INQUESTS=c(152, 528, 515, 292, 141, 42, 262, 352, 326, 216))
 
@@ -75,4 +133,65 @@ officials <- data.frame
 ```
 
 
+```{r}
 
+# library
+
+ 
+# Build Dataset
+#group <- c(rep("group-1",4),rep("group-2",2),rep("group-3",3))
+#subgroup <- paste("subgroup" , c(1,2,3,4,1,2,1,2,3), sep="-")
+#value <- c(13,5,22,12,11,7,3,1,23)
+#data <- data.frame(group,subgroup,value)
+ 
+# treemap
+
+#library(waffle)
+
+count.sorted <- all.sorted %>%
+  group_by(AGE, RACE) %>%
+  summarize(count = n()) 
+
+
+ggplot(count.sorted, aes(x=, y=count)) + geom_point()
+  
+
+#waffle(count.sorted, row = 10, legend_pos = "bottom")
+
+#treemap(all.sorted,
+ #           index=c("AGE","RACE"),
+  #          vSize= count,
+   #         type="index"
+    #        ) 
+```
+
+```{r}
+var <- mpg$class  # the categorical data 
+
+## Prep data (nothing to change here)
+nrows <- 10
+df <- expand.grid(y = 1:nrows, x = 1:nrows)
+categ_table <- round(table(var) * ((nrows*nrows)/(length(var))))
+categ_table
+#>   2seater    compact    midsize    minivan     pickup subcompact        suv 
+#>         2         20         18          5         14         15         26 
+
+df$category <- factor(rep(names(categ_table), categ_table))  
+# NOTE: if sum(categ_table) is not 100 (i.e. nrows^2), it will need adjustment to make the sum to 100.
+
+## Plot
+ggplot(df, aes(x = x, y = y, fill = category)) + 
+        geom_tile(color = "black", size = 0.5) +
+        scale_x_continuous(expand = c(0, 0)) +
+        scale_y_continuous(expand = c(0, 0), trans = 'reverse') +
+        scale_fill_brewer(palette = "Set3") +
+        labs(title="Waffle Chart", subtitle="'Class' of vehicles",
+             caption="Source: mpg") + 
+        theme(panel.border = element_rect(size = 2),
+              plot.title = element_text(size = rel(1.2)),
+              axis.text = element_blank(),
+              axis.title = element_blank(),
+              axis.ticks = element_blank(),
+              legend.title = element_blank(),
+              legend.position = "right")
+```

@@ -1,9 +1,9 @@
 {
     "id": "4235FE91",
-    "path": "~/HIST8510_Final_Project/CSI_Greenville_HIST8510_Final_Project.qmd",
-    "project_path": null,
+    "path": "~/CSI:Greenville/CSI_Greenville_HIST8510_Final_Project.qmd",
+    "project_path": "CSI_Greenville_HIST8510_Final_Project.qmd",
     "type": "quarto_markdown",
-    "hash": "149572164",
+    "hash": "3763172922",
     "contents": "",
     "dirty": false,
     "created": 1713949508467.0,
@@ -12,15 +12,20 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "42,151",
-        "scrollLine": "39"
+        "cursorPosition": "32,18",
+        "scrollLine": "19",
+        "rmdVisualMode": "false",
+        "rmdVisualWrapConfigured": "true",
+        "docOutlineVisible": "1",
+        "rmdVisualModeLocation": "22283:6",
+        "rmdVisualCollapsedChunks": ""
     },
     "folds": "",
-    "lastKnownWriteTime": 1714568780,
+    "lastKnownWriteTime": 1714759680,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1714568780990,
+    "last_content_update": 1714759680298,
     "read_only": false,
     "read_only_alternatives": []
 }
